@@ -8,6 +8,6 @@ int main(){
     {
         cout << "........." <<endl;
     }
-    cout<< "Or else Emma will be pissed!"<<":("<< endl;
+    cout<< "Or else Amanda will be pissed!"<<":("<< endl;
     return 0;
 }
