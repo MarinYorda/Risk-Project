@@ -1,16 +1,17 @@
+#pragma once
 #include <iostream>
 #include <vector>
-using namespace::std;
+using namespace std;
+
 // // the Node class
 // class Node{
 //     private:
 //     Territory* territory;
 //     vector <string> adjacentTerritory;
-
-
-
 // };
 // the Continent class
+
+
 class Continent{
     private:
     string* continentName;
@@ -30,7 +31,7 @@ class Continent{
     Continent(string continentName, int bonusValue);
     Continent(string continentName, int bonusValue, vector<Territory*> t);
     Continent(Continent &continent);
-    ~Continent();
+    // ~Continent();
 
     //Overloads
     Continent& operator=(const Continent& t); //Overload assignment operator
@@ -57,10 +58,11 @@ class Territory{
 
     // constructors for Territory class
     Territory();
+    Territory(string territoryName, Continent continent);
     Territory(string territoryName, Continent continent, int noOfArmies);
-    Territory(string territoryName, Continent continent, vector <Territory*> adjacent);
+    Territory(string territoryName, Continent continent, int noOfArmies, vector <Territory*> adjacent);
     Territory(Territory &territory);
-    ~Territory();
+    // ~Territory();
 
     //Overloads
     Territory& operator=(const Territory& t); //Overload assignment operator
