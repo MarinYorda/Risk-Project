@@ -2,6 +2,7 @@
 #include <vector>
 #include "map.h"
 #include <stack>
+#include <fstream>
 using namespace std;
 
 
@@ -13,18 +14,18 @@ using namespace std;
     }
 
     ostream &operator<<(ostream &output, Territory &obj){
-        output << obj.getTerritoryName() << " which belongs to" << obj.getContinent()->getContinentName() << endl;
+        output << obj.getTerritoryName() << " belongs to Continent: " << obj.getContinent()->getContinentName() << endl;
         return output;
     }
-// ostream &operator<<(ostream &output, Map &obj)
-// {
-//     output << "The Map has " << obj.getV().size() << " vertices and contains "
-//            << obj.getListOfContinents().size() << " continents." << endl;
-//     return output;
-// }
+    ostream &operator<<(ostream &output, Map &obj)
+    {
+        output << "The Map has " << obj.getSubgraph().size() << " continents." << endl;
+        return output;
+    }
 
 
     // ------------------- CONTINENT CLASS --------------------------
+    
     // ------------------ GETTERS AND SETTERS ----------------------
 
     string Continent::getContinentName(){
@@ -43,16 +44,19 @@ using namespace std;
 
 
     // ------------------- CONSTRUCTORS ----------------------
-
+    //Default constructor
     Continent::Continent(){};
     
+
     Continent::Continent(string continentName, int bonusValue) {
         continentName = continentName; 
         bonusValue = bonusValue; 
     };
     
+    //Copy Constructor
     Continent::Continent(Continent &continent){
-        continentName = continent.continentName;
+        this->continentName = continent.continentName;
+        this->bonusValue = continent.bonusValue;
     };
     
   
@@ -71,16 +75,20 @@ using namespace std;
     
         
     // --------------------- TERRITORY CLASS --------------------------
+
     // -------------------- GETTERS AND SETTERS ----------------------
     string Territory::getTerritoryName(){
         return *this->territoryName;
     };
-    Continent Territory::getContinent(){
-        return *this->continent;
+    Continent *Territory::getContinent(){
+        return this->continent;
     };
     int Territory::getNoOfArmies(){
         return *this->noOfArmies;
     };
+    string Territory::getPlayerName(){
+        return *this->playerName;
+    }
     void Territory::setTerritoryName(string territoryName){
         *this->territoryName = territoryName;
     };
@@ -90,25 +98,30 @@ using namespace std;
     void Territory::setNoOfArmies(int noOfArmies){
         *this->noOfArmies = noOfArmies;
     };
+    void Territory::setPlayerName(string playerName){
+        *this->playerName = playerName;
+    }
 
 
 
     // --------------------- CONSTRUCTORS -------------------------
 
+    // Default Constructor
     Territory::Territory(){};
-    Territory::Territory(string territoryName, Continent continent){
-        
-    }
+
     Territory::Territory(string territoryName, Continent continent,int noOfArmies, vector <Territory*> adjacent){
-        territoryName = territoryName;
-        continent = continent;
-        noOfArmies = noOfArmies;
+        *this->territoryName = territoryName;
+        *this->continent = continent;
+        *this->noOfArmies = noOfArmies;
         //create a list of adjacent countries of the territory stored in a vector of points 
     };
+
+    // Copy Constructor
     Territory::Territory(Territory &territory){
-        territoryName = territory.territoryName;
-        noOfArmies= territory.noOfArmies;
-        continent = territory.continent;
+        this->territoryName = territory.territoryName;
+        this->noOfArmies= territory.noOfArmies;
+        this->continent = territory.continent;
+        this->playerName = territory.playerName;
     };
 
 
@@ -126,14 +139,32 @@ using namespace std;
         return *this;
     }
 
+// ------------------- Map Class ---------------------
+// ------------------- Getters and Setters ---------------
+vector <Continent*> Map::getSubgraph (){
+    return this->subgraph;
+};
+
+void Map::setSubgraph(vector<Continent*> sub){
+    this->subgraph = sub;
+}
+
+// ----------------- Constructors ----------------
+Map::Map(){};
+Map::Map(vector<Continent*> subgraph){
+    this->subgraph = subgraph;
+};
+
+
+
+
+
+
+
 class MapLoader{
     Map* loadMap();
+
+    vector<Continent*> listOfContinents(){
+        
+    };
 };
-
-
-class Map{
-    vector <Continent*> con;
-    bool validate();
-};
-
-

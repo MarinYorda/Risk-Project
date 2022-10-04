@@ -31,3 +31,35 @@ testing stuff out
 		MAP LOADER
 FUNCTIONS:
 * LoadMap: reads the .map file, then creates a map object which should then create a map according to the specifications of the .map file
+
+
+
+1.mapdriver calls the map loader
+2.map loader asks user for a file (should have ifs/switch statements to verify that it exists/is openable,etc.)
+3.file is opened, search for "CONTINENT" keyword
+4.map loader calls a method that reads every line below "CONTINENT" until the empty line. creating continent objects that get added to the vector list EX.(Europe=7)
+6.search for "TERRITORIES" keyword in the file
+7.call a method that adds territories to a particular continent
+
+splits by commas, 
+	1.name of territory (string pointer)
+	2.continent it belongs to (we have to correlate with a value in the vector of continents) (string pointer)
+	3.all adjacent territories (strin)
+
+
+
+
+8.send the vector list to Map constructor and create your map
+
+
+
+
+
+till no more territories:
+map:
+Territory*(A[0],A[3]);
+vectorOfTerritories.push();
+
+
+add adjacency list to territories
+add territories to continents ...

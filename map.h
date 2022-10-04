@@ -46,15 +46,19 @@ class Territory{
     string* territoryName;
     Continent* continent;
     int* noOfArmies;
+    // this will eventually be a player object
+    string* playerName;
 
     // getter and setter methods for Territory class
     public:
     string getTerritoryName();
-    Continent getContinent();
+    Continent *getContinent();
     int getNoOfArmies();
+    string getPlayerName();
     void setTerritoryName(string territoryName);
     void setContinent(Continent &continent);
     void setNoOfArmies(int noOfArmies);
+    void setPlayerName(string playerName);
 
     // constructors for Territory class
     Territory();
@@ -83,12 +87,22 @@ class Territory{
 // }
 
 class MapLoader{
+    public:
     Map* loadMap();
+    vector<Continent*> listOfContinents();
 };
 
 
 class Map{
-    vector <Continent*> con;
+    private:
+    vector <Continent*> subgraph;
+
+    public:
+    Map();
+    Map(vector <Continent*> subgraph);
+    vector <Continent*> getSubgraph();
+
+    void setSubgraph(vector<Continent*> sub);
     bool validate();
 };
 
