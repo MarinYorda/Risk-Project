@@ -162,7 +162,54 @@ Map::Map(vector<Continent*> subgraph){
 
 
 class MapLoader{
-    Map* loadMap();
+    Map* loadMap(){
+        cout<<"Enter the name of the .map file you would like to open: "<<endl;
+        string fileName;
+        cin>> fileName;
+        Map* map = new Map();
+        string extension = fileName.substr((fileName.length())-4,fileName.length());
+        if(extension!=".map"){
+            cout<<"The file you entered is not of the .map format, you may try again!";
+            // by returning a null map pointer, we can reject all non .map files
+            return map;
+        }
+        // Open the file
+        ifstream file(fileName);
+        string lineText;
+        bool atContinents = false;
+        // loop through until we find [CONTINENTS] keyword
+        while(!file.eof() && !atContinents){
+            getline(file,lineText);
+            if(lineText == "[CONTINENTS]"){
+                atContinents = true;
+            };
+            
+        };
+
+        if(file.eof() && !atContinents){
+                cout << "End of File reached. No continents found, invalid map!" <<endl;
+            };
+        
+        if(atContinents){
+            vector <Continent*> continents;
+
+            while (lineText != " "){
+                getline(file,lineText);
+                string delimiter = "=";
+                string continentName = lineText.substr(0, lineText.find(delimiter));
+                string bonusValue = lineText.substr(lineText.find(delimiter), lineText.length());
+                int bonusValueInt = stoi(bonusValue);
+                Continent* c = new Continent(continentName,bonusValueInt);
+                continents.push_back(c);
+            }
+            map->setSubgraph(continents);
+        }
+        // next is territories
+
+
+
+
+    };
 
     vector<Continent*> listOfContinents(){
         
