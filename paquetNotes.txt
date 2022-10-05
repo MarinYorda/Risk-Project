@@ -1,0 +1,224 @@
+GENERAL
+
+- can add as my helper methods as we want but CANNOT have more/different files than what's in the spec
+- You can use smart pointers but not where I impose the use of pointers. Smart pointers are not pointers. They are an object that encapsulates a pointer and somehow make you avoid to use pointers.
+- advantages of using pointers in this case:
+    1. The object no longer depends on its parent, so for example if you have Territory *territory in Map, then by deleting map you have the option of keeping territory alive. 
+    If it weren't a pointer, then the territory would be stored along with the Map and therefore would be deallocated if Map also was deallocated. This gives some flexibility
+    2. You can use forward declarations since the compiler no longer needs to know the size of the class beforehand. This prevents certain bugs that beginner C++ users might get confused about
+
+- I really want your project to contain only one main function.
+- One principle about a repo is that you should avoid storing files that are generated. [basically only push source files, not the random ones vscode generates]
+- An object is an object. There is no such thing like an object that is a pointer. What you have if you are using pointers is a pointer to an object. Think of the pointer and the object to be two separate values. 
+The pointer is just an abstract mechanism that you use to refer to an actual object.
+
+
+    - q: I was wondering if I could get additional details on this statement in the assignment: "All classes must implement a correct copy constructor, assignment operator, and stream insertion operator" 
+    I'm assuming that means we need to overload the operators? Why should we implement these?
+    - a: https://en.wikipedia.org/wiki/Rule_of_three_(C%2B%2B_programming)
+    - a: First, since the assignment statement forces you to use pointers as some of your data members, that raises the issue of deep copy, which force you to implement copy constructors and assignment operators, as explained in class earlier this week. 
+    For the stream insertion operators, they are very handy for outputting objects to the console when you implement your test* functions and demonstrate them to the marker during the assignment demonstrations.
+
+    - q: list or vector 
+    - a: A list has sequential access only. A vector has random access. Lists inherently have pointers between elements, which make them consume more memory. But that really depends on how they are implemented behind the scenes.  
+    In any case, you will not lose marks for writing sub-optimal code in this project.
+
+    - q: how do you accomplish running the tests in the main driver without importing the cpp file?
+    - a: You create a corresponding header file for each of the driver cpp files that each contain a declaration for the test function implemented in their corresponding cpp file, then you include these header files in the main driver cpp file.
+
+
+
+MAP
+
+- A Territory should contain the list of all its neighbouring Territories, which should all be pointers to other Territories.
+- Implement it instead as the Territories having a list of adjacent territories, from a game design aspect the user will more often want to know which territories are adjacent to which, so a matrix will make that design difficult
+- For the those checks, I added id's and searching by id on the Map. This way it's very easy to access the territories adjacent to one the user wants
+- For anyone who was confused. The format is the following:
+territory_name,x,y,continent_name,territory_name_adj_1,territory_name_adj_2 ...
+
+- Each territory line contains the continent to wich they belong, after the numbers on the fourth comma-separated element.
+    - q: is there a difference between a territory and a country
+    - a: No. Same concept. I do my best to try to always use the term Territory
+
+    - q: For the copy constructors, should territories be a shallow copy since there's technically only 1 copy of them?
+    - a: Shallow/deep copy has to do with whether or not the data members inside the object would get duplicated or not when you copy the object, not the object itself.
+
+    - q: I was wondering about a few things.  How the .map files we receive for part 1 are organized. Is it a folder that contains a few .map files? Do we process them one by one or a bunch at the same time by creating a few instances of the Map class? There are two different "validation" stages for part 1 right? 
+    The first is before we implement the graph (for example, what if an adjacent territory is repeated a bunch of time in the .map file) and the second one is after to make sure that the graph is connected, the continents are too etc
+    - a: In the assignment handout, it is said that the code should reject "invalid files". Tough it does not say what is an "invalid file", what it essentially means is that you should be able to successfully process any of the map files without crashing, and report that a file is invalid when one is read. 
+    THen, when a map is successfully loaded and a map object is created has been created, the validate() method can be called.
+
+    - q: TestLoaderMap() should be implemented as a free function in MapDriver.cpp? What about the map MapLoader class, how does it come into play? Is it that we implement testLoaderMap() in that class but not as a member and call it in MapDriver.cpp
+    - a: testLoadMaps() is a free function in the file MapDriver.cpp. As a free function, it is a function that is not a member of any class. The MapLoader class will have a method that you can call that makes it read a map file and create a Map object. This method will be called by the testLoadMaps() method.
+
+    - q: And invalid could be anything, like repeated adjacent territories or a missing comma?
+    - a: Don't overdo it. There might be a lot of different cases of invalid map file. I do not expect that you invest a lot of effort to trap very specific cases of invalid files. There are obvious ones such as (1) the file does not exists (2) the file is empty (3) the file is missing one of the sections. Keep it simple.
+
+    - q: I understand! Would you say those three are enough?
+    - a: Yes. The assignment statement says "rejects various different invalid map files". If you read it literally (as you should), then if you reject these 3 cases (for example), then you meet the requirement.
+
+    - q: Perfect! And my the last thing I was wondering about is whether we process each map one at a time or multiple at the same time, I think it's the former, but I'm not sure. Also, would the files be given as a folder to process? The assignment says through URL, so one at a time through the URLs?
+    - a: There will never be a case where more than one Map object needs to exist at the same time during the execution. Assume that the files are stored in a folder. Your program doesn't have to read them from the web site, and extract them from the zip files etc. Keep it simple.
+
+    - q: If the .map file is not found by the input stream is an exception with an error message considered an appropriate handling of that situation?
+    - a: use a try catch
+
+    - q: Thanks! I was thinking of that too, I'm wondering if it's okay that the program ''terminates'' after an error message
+    - a: So what I did is that I just simply catch that exception and then throw a new runtime and catch it in the driver class.
+        Here's an example: 
+        
+        MapLoader.cpp
+        [...]
+            try{
+              territory->setY(std::stoi(value));
+            } catch (std::invalid_argument& e){
+              throw std::runtime_error("Map Formatting Error: Invalid Y Coordinate.");
+            } catch (std::out_of_range& e) {
+              throw std::runtime_error("Map Formatting Error: Y Coordinate Out Of Range.");
+            }
+
+        MapDriver.cpp
+        [...]
+            try {
+                map = loader.load(path);
+            } catch (const std::runtime_error& error){
+                std::cout << "Map Format is Invalid. \n"
+                        << error.what() << std::endl;
+            }
+
+        [referring to code above]
+        "Mine isn't perfect right now because I'm just assuming any runtime_error is an invalid map format which is not entirely true but i'll fix that later"
+
+- A territory should probably have a list of pointers that point to it's adjacent territories. That's what the prof told me :]
+
+    - q: If the .map file is not found by the input stream is an exception with an error message considered an appropriate handling of that situation?
+    - a: Yes (try catch is a good option)
+
+    - q: I'm a bit confused about something. We know all data members of user defined classes must be of type pointer but for the MapLoader class that needs to have a method that loads the map (and implement the map as a graph), 
+    for that method, can we use string types? Regular expression types? How could we load the map without these?
+    - a:When you read from the file, the Territory names are strings of course. But past the actual file reading phase, you should create and manipulate Territory objects. For example, the list of adjacent territories of a territory should be a list of pointers to objects of type Territory, not a list of strings.
+
+    - q: when Territory object is created, should it be like pointer type of object?
+    - a:An object is an object. There is no such thing like an object that is a pointer. What you have if you are using pointers is a pointer to an object. Think of the pointer and the object to be two separate values. The pointer is just an abstract mechanism that you use to refer to an actual object.
+
+    - q: also, you already mentioned here that we should leave the neighbouring territories part empty when Territory object is created (because we don't have all the Territory objects yet), but then do we read the .map file again to make them connect each other?
+    - a: There are different possible strategies, e.g. (1) process each full territory line completely as you go. 
+    In this case when you go over the adjacency list, you create a neighbour territory if it does not already exist, or create a pointer to a neighbour if it does already exist. (2) You scan the list of teritories twice. 
+    The first time to create all the territories without processing the neigbours list in each line, then process the list once again, this time to create the pointers to the neigbours.
+
+    - q: How can we test if a territory is exactly in one continent, is there a file we can test for that or can we edit a file and add a line and if so, how would we add that line
+    - a: when inserting the territory in the continent, check if there's already a territory with the same name in the map
+
+    - q: for finding out if graphs are connected graphs and their subgraphs are too, is there a big difference between BFS and DFS?
+    - a: Correct me if I am wrong but I dont think that there is much difference. It may depend on what are the characteristics of the graph. For example a graph that is a very long line where each territory has one neigbour, vs a fully connected graph where each territory is a neigbour to all the others.
+
+    - q [necknacker]: I was thinking of implementing the adjacency list by holding all the countries a certain territory is adjacent to in a list (could be dynamic array or vector not sure yet). 
+    But was wondering whether that's a good approach to the whole "edges and nodes" that the assignment asked for or if I'm missing something more concrete
+    - a: I think the nodes are the territories and the edges are a list of pointers inside the territory to territories adjacent to it
+
+- [concerning getting territories and continents from the file] 
+    - the 4th token in each line is the continent name, i.e., Territory,X_Coord,Y_Coord,ContinentName,Adjacencies so you have 0 reason to depend on the order of the lines for figuring out the continent
+    - "I know, you're assuming that the lines under [Territories] are grouped by continent. I don't know why you're assuming that"
+    - "just search by continent name rather than using id's like this"
+    - "yes, so figure out a way to not depend on line order for your continents"
+    - "if you have a list of continents, why not search for the continent you want by the name that's in each line?"
+    - "As a tip, you can tell here that everything is very name-heavy. It is a lot easier to just refer to everything by name, rather than the order they appear in"
+
+
+
+
+
+
+ORDERS
+
+- all the methods in the Order class (execute, validate..) arent to be filled out right now
+- each player will put orders in their own orders list every turn during the orders issuing phase. The orders will then be removed one by one from the players’ orders list and executed by the game engine during the orders execution phase. 
+    - q: am I right to understand that in the issue order phase, the player will pick a singular order available (deply, advance, bomb, blockade, airlift, negatioate from their cards?) issue that order and wait until a round robin of players issue their singular order then go to the order execution phase?
+    - a: yes. Note that the round robin goes in many iterations until all players have signified that they dont have any more orders to issue. And also note that is is not part of assignmnent 1
+
+- if I issue an order and then the others do as well, I can then issue another order until I've stated I am done as well as the others
+- for assignment 1, issueOrder should just generically create an order and add it to the list of orders just to show that functionality, but not worry about the logic behind it
+- The reinforcement card puts 5 army units in the players’s reinforement pool. This is an immediate effect, not an order. The diplomacy card is used to create the negotiate order. 
+Deploy orders and advance orders are orders that dont require a card. Note that you are not asked to implement the effect of the orders in assignment 1. 
+
+- Concerning the order issuing phase, in round robin fashion each player can only issue one order, then it loops again and asks them for another order if they have one
+- also for the execution of the orders, it follows the same pattern of orders from the Issuing Phase. for example, in the issuing phase, player 1 issued bomb,airlift,deploy then in the execution phase, player will execute bomb,airlift,deploy (in that order) whenever its his turn obviously 
+
+    - q: Since i'm going to have subclasses for each of my orders (deploy,advance,blockade,airlift,negotiate), can i just make a stream insertion operator in my derived classes?
+    - a: there's two ways of doing this, either you override the stream output in the subclasses to output specific things, or you have a member variable in the base class that you set in the derived classes, and there's one default stream output implementation in the base.
+         It's mostly personal choice, but imo the second option is better, because it standardises the way the orders are displayed and it's easier to read setting a member variable than overriding stream output operators everywhere
+
+    - q: For the OrdersList move() method, are we allowed using std::swap?
+    - a: you're allowed anything long as its used properly
+
+    - q:
+    - a:
+
+    - q:
+    - a:
+
+
+CARDS/DECK
+
+- draw() method should be in both hand and deck objects
+- The reinforcement card puts 5 army units in the players’s reinforement pool. This is an immediate effect, not an order. The diplomacy card is used to create the negotiate order. 
+Deploy orders and advance orders are orders that dont require a card. Note that you are not asked to implement the effect of the orders in assignment 1. 
+
+    - q: Can a players Hand have multiple cards of the same time? 
+    - a: yes
+
+    - q: When do they actually draw from the Deck?
+    - a: as explained in the project description, a player gets to draw one card if they have conquered at least one territory during the current turn. Also note that this is not part of assignment 1
+
+    - q: For instance, does the Card::play method have to remove the card from the hand and put it back in the deck? In that case, am I allowed to add additional parameters?
+    - a: Yes the card should be removed fron the hand and returned to the deck when play play is called. Yes you are allowed to add parameters.
+
+- Cards have type bomb, reinforcement, blockade, airlift, and diplomacy; Orders have type deploy, advance, bomb, blockade, airlift, negotiate
+- If the card bomb creates order bomb, card blockade creates order blockade, card diplomacy creates order negotiate, card airlift creates order airlift 
+
+    - q: Does Deck::draw have to add the card to the player's hand itself or can that happen in another method?
+    - a: The assignment statement does not really mention either, so you are free to do it as you want. I would imagine for example that the player has a draw method, that will in turn call the deck’s draw method.
+
+    - q: For the cards section, it says that a card should be dealt to anyone at the end of their turn if they conquered at least one territory. Does that mean that nobody begins the game with cards?
+    - a: Correct. Note that you dont have to implement conquering a territory in assignment 1
+
+
+
+GAME ENGINE
+
+- The driver files each contain one test free function then t ou have one mainDriver file that contains the main function that calls every test* function.
+    - q: For part 5 I'm thinking about using nested switch but I know its going to be very long and hard to read. Is there any alternatives to making our state machine?
+    - a: There is no need to overcomplicate it: [posted the code below]
+
+    startup() {
+        loadMap();
+
+        validateMap();
+
+        while (userInput != "done") {
+            player = addPlayer();
+            assignTerritoryToPlayer(player);
+        }
+    }
+
+    play() {
+        while(true) {
+            assignReinforcements();
+
+            for (player in players) {
+                player.issueOrders();
+            }
+
+            for (player in players) {
+                player.executeOrders();
+
+                if (isGameOver()) {
+                    break;
+                }
+            }
+        }
+    }
+
+    [referring to the code above]
+    "This is just an example, your architecture may vary a bit. User input happens when adding players (by the admin, who's creating the game) and when issuing Orders. 
+    If you must implement it as a state machine with constant user input, you can have a "state" variable that's an enum (each state corresponding to a enum value), and have a central loop where it executes functions if and only if the state is correct"
