@@ -17,7 +17,7 @@ int zero = 0;
 int* Player::playerCount = &zero;
 
 Player::Player(string* pName) {
-    this->name = pName;
+    this->name = new string(*pName);
 
     // Use the player count as the player's id then increment the count
     this->id = new int(*playerCount);
@@ -38,7 +38,7 @@ Player::Player(const Player& copyPlayer) {
 
 ostream &operator<<(ostream &out, const Player &p) {
     cout << "Player: " << p.name << endl;
-    p.hand->print();
+    cout << *p.hand << endl;
 
     cout << "Orders: " << endl;
     for(string* str : p.orders) {
@@ -137,34 +137,53 @@ void Player::draw() {
 }
 
 void Player::print() {
-    cout << "Player: " << *name << endl << endl;
-    hand->print();
-
-    cout << "Orders: " << endl;
+    cout << "Player: " << *name <<  endl;
+    cout << *hand;
     if (orders.empty()) {
         cout << "No orders yet" << endl;
     }else {
+        cout << "Orders: " << endl;
         for(string* str : orders) {
             cout << *str << endl;
         }
     }
 
-    cout << "Territories: " << endl;
+
+
     if (territories.empty()) {
         cout << "No territories yet" << endl;
     } else {
+        cout << "Territories: " << endl;
         for(string* str : territories) {
             cout << *str << endl;
         }
     }
 
+    cout << "" << endl;
+
 }
 
 
 Player::~Player() {
+    delete id;
+    id = nullptr;
+
     delete name;
     name = nullptr;
 
     delete hand;
     hand = nullptr;
+
+    delete deck;
+    deck = nullptr;
+
+    for(string* str : orders) {
+        delete str;
+        str = nullptr;
+    }
+
+    for (string* str : territories) {
+        delete str;
+        str = nullptr;
+    }
 }

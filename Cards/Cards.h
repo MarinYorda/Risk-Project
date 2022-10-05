@@ -10,7 +10,7 @@ class Card;
 class Hand;
 class Player;
 
-//////////////////////////////// DECK //////////////////////////////
+/////////////////////////////////////////////// DECK /////////////////////////////////////////////////
 
 class Deck 
 {
@@ -20,21 +20,30 @@ class Deck
 
     public:
 
-        //CONSTRUCTORS
-        Deck(vector<Player*> players); //constructor [takes in the list of players]
-        Deck(const Deck& copyDeck); //copy constructor
-        // Deck& operator=(const Deck& deck); //assignment operator
-        //friend ostream& operator<<(ostream& os, Deck& deck); //stream insertion operator
+        // CONSTRUCTOR
+        Deck(vector<Player*> players);
 
-        //GETTERS
+        // COPY CONSTRUCTOR
+        Deck(const Deck& copyDeck); //copy constructor
+
+        // ASSIGNMENT OPERATOR
+        Deck& operator=(const Deck& assignDeck); //assignment operator
+
+        // STREAM INSERTION OPERATOR
+        friend ostream& operator<<(ostream& os, Deck& deck); //stream insertion operator
+
+        // GETTERS
         vector<Card*> getCards();
         unordered_map<int, Hand*> getHands();
+        int size();
 
+        // SETTERS
+        void setCards(vector<Card*> newCards);
+        void setHands(unordered_map<int, Hand*> newHands);
 
+        // OTHER
         void draw(Player* player); // draw from deck
         void addToDeck(Card* cardToAdd); // place card in deck
-        int size(); // size of deck
-        void print();
 
         //DESTRUCTOR
         ~Deck(); //destructor
@@ -42,47 +51,62 @@ class Deck
 };
 
 
-/////////////////////// HAND //////////////////////////
+/////////////////////////////////////////////// HAND /////////////////////////////////////////////////
 class Hand 
 {
     private:
         vector<Card*> cards;
 
     public:
-        // CONSTRUCTORS
+        // CONSTRUCTOR
         Hand();
-        Hand(const Hand&); //copy constructor
-        // Hand& operator=(const Hand&); //assignment operator
-        //friend ostream& operator<<(ostream& os, const Hand& outputHand); //stream insertion operator
+
+        // COPY CONSTRUCTOR
+        Hand(const Hand& copyHand); //copy constructor
+
+        // ASSIGNMENT OPERATOR
+        Hand& operator=(const Hand& assignHand); //assignment operator
+
+        // STREAM INSERTION OPERATOR
+        friend ostream& operator<<(ostream& os, const Hand& hand); //stream insertion operator
 
 
         // GETTERS
         vector<Card*> getHand();
         int getCardCount();
 
+        // SETTERS
+        void setCards(vector<Card*> newCards);
 
-        void draw(Player* p, Deck* d);
+        // OTHER
         void playAllCards(Player* p, Deck* d);
+        void draw(Player* p, Deck* d);
         void addToHand(Card*);
         void deleteFromHand(Card*);
-        void print();
-        
 
         // DESTRUCTOR
         ~Hand();
 
 };
 
+/////////////////////////////////////////////// CARD /////////////////////////////////////////////////
+
 class Card {
     private:
         string* cardName;
 
     public:
-        //CONSTRUCTORS
-        Card(int cardType); //name of card as parameter
-        Card(const Card& copyCard); //copy constructor
-        // Card& operator=(const Card& assignCard); //assignment operator
-        friend ostream& operator << (ostream& os, const Card& outputCard); //stream insertion operator
+        // CONSTRUCTOR
+        Card(int cardType);
+
+        // COPY CONSTRUCTOR
+        Card(const Card& copyCard);
+
+        // ASSIGNMENT OPERATOR
+        Card& operator=(const Card& assignCard);
+
+        // STREAM INSERTION OPERATOR
+        friend ostream& operator << (ostream& os, const Card& outputCard);
 
         //GETTERS 
         string* getCardName();
@@ -90,7 +114,7 @@ class Card {
         //SETTERS
         void setCardName(string cardType);
 
-
+        // OTHER
         void play(Player* p, Deck* d); //adds the card to player's order list and puts card back in Deck
         void print();
         

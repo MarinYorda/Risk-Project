@@ -11,9 +11,12 @@
 #include <random>
 using namespace std;
 
+/////////////////////////////////////////////// DECK /////////////////////////////////////////////////
+
+// CONSTRUCTOR
 Deck::Deck(vector<Player*> players) {
 
-    //Make initial Deck (2 cards of each type)
+    //Make initial deck (2 cards of each type)
     Card* bomb1 = new Card(0);
     Card* bomb2 = new Card(0);
     Card* reinforcement1 = new Card(1);
@@ -47,27 +50,69 @@ Deck::Deck(vector<Player*> players) {
 
         //Assign this deck to each player
         currentPlayer->setDeck(this);
+
+        // delete pointers
+//        delete currentPlayer;
+//        currentPlayer = nullptr;
+//        delete playerId;
+//        playerId = nullptr;
     }
 
+    //delete card pointers
+//    delete bomb1;
+//    bomb1 = nullptr;
+//    delete bomb2;
+//    bomb2 = nullptr;
+//    delete reinforcement1;
+//    reinforcement1 = nullptr;
+//    delete reinforcement2;
+//    reinforcement2 = nullptr;
+//    delete blockade1;
+//    blockade1 = nullptr;
+//    delete blockade2;
+//    blockade2 = nullptr;
+//    delete airlift1;
+//    airlift1 = nullptr;
+//    delete airlift2;
+//    airlift2 = nullptr;
+//    delete diplomacy1;
+//    diplomacy1 = nullptr;
+//    delete diplomacy2;
+//    diplomacy2 = nullptr;
 
 }
 
+// COPY CONSTRUCTOR
 Deck::Deck(const Deck& copyDeck) {
-
+    cards = copyDeck.cards;
+    hands = copyDeck.hands;
 }
 
+// ASSIGNMENT OPERATOR
+Deck& Deck::operator=(const Deck& assignDeck)
+{
+    cout << "Copy assignment operator of Deck" << endl;
+    for (int i = 0; i < assignDeck.cards.size(); i++)
+    {
+        this->cards.push_back(new Card(*(assignDeck.cards[i])));
+    }
+    return *this;
+}
+
+// STREAM INSERTION OPERATOR
 ostream& operator<<(ostream& os, Deck& deck)
 {
-    cout << "There are" << deck.size() << "cards left in the deck." << endl;
+    cout << "There are " << deck.cards.size() << " cards left in the deck." << endl;
 
     //iterate through deck and print every card type
-    for(Card* card : deck.getCards()) {
-        cout << *card << endl;
+    for(Card* card : deck.cards) {
+        cout << *card << "; ";
     }
+    cout << "" << endl << endl;
     return os;
 }
 
-
+// GETTERS
 vector<Card*> Deck::getCards() {
     return cards;
 }
@@ -76,7 +121,20 @@ unordered_map<int, Hand*> Deck::getHands() {
     return hands;
 }
 
+int Deck::size() {
+    // Return current size of deck
+    return cards.size();
+}
 
+// SETTERS
+void Deck::setCards(vector<Card*> newCards) {
+    cards = newCards;
+}
+void Deck::setHands(unordered_map<int, Hand*> newHands) {
+    hands = newHands;
+}
+
+// OTHER
 void Deck::draw(Player* p1) {
 
     //Retrieve random card from the deck and delete
@@ -91,29 +149,21 @@ void Deck::draw(Player* p1) {
 
 }
 
-
 void Deck::addToDeck(Card* card) {
     // After a player plays a card, it goes back into the deck
     cards.push_back(card);
 }
 
 
-int Deck::size() {
-    // Return current size of deck
-    return cards.size();
-}
-
-void Deck::print() {
-    cout << "There are " << this->size() << " cards left in the deck." << endl;
-
-    //iterate through deck and print every card type
-    for(Card* card : this->getCards()) {
-        cout << *card << endl;
-    }
-}
-
 // Destructor
 Deck::~Deck() {
+
+    //delete every card pointer in hand
+    for (Card* card : cards) {
+        delete card;
+        card = nullptr;
+    }
+
     // delete hashmap values
     for (auto entry: hands) {
         delete entry.second;
@@ -122,29 +172,41 @@ Deck::~Deck() {
 }
 
 
-////////////////////////// HAND CLASS ///////////////////////////
+/////////////////////////////////////////////// HAND /////////////////////////////////////////////////
 
-
-//vector<Card>* cards;
-
+// CONSTRUCTOR
 Hand::Hand() {
 }
 
-Hand::Hand(const Hand&) {
-
+// COPY CONSTRUCTOR
+Hand::Hand(const Hand& copyHand) {
+    this->cards = copyHand.cards;
 }
 
-ostream& operator <<(ostream& os, Hand& hand)
+// ASSIGNMENT OPERATOR
+Hand& Hand::operator=(const Hand& assignHand)
 {
-    cout << "This player has" << hand.getCardCount() << "cards." << endl;
+    cout << "Copy assignment operator of Hand" << endl;
+    for (int i = 0; i < assignHand.cards.size(); i++)
+    {
+        this->cards.push_back(new Card(*(assignHand.cards[i])));
+    }
+    return *this;
+}
+
+// STREAM INSERTION OPERATOR
+ostream& operator <<(ostream& os, const Hand& hand)
+{
+    cout << "This player's hand has " << hand.cards.size() << " cards." << endl;
 
     //iterate through deck and print every card type
-    for(Card* card : hand.getHand()) {
-        cout << *card << endl;
+    for(Card* card : hand.cards) {
+        cout << *card << "; ";
     }
     return os;
 }
 
+// GETTERS
 vector<Card*> Hand::getHand() {
     return cards;
 }
@@ -153,71 +215,77 @@ int Hand::getCardCount() {
     return cards.size();
 }
 
+// SETTERS
+void Hand::setCards(vector<Card*> newCards) {
+    cards = newCards;
+}
+
+// OTHER
 void Hand::playAllCards(Player* p, Deck* d) {
-    for(Card* card : cards) {
-        card->play(p,d);
+    // calls play() on every card in hand
+    int cardsSize = cards.size();
+    for (int i = 0; i < cardsSize; i++) {
+        cards[0]->play(p,d);
     }
 }
 
 void Hand::draw(Player* p, Deck* d) {
-    // Calls the deck draw method with current player
+    // Calls the deck draw() method with current player
     d->draw(p);
 
 }
 
 void Hand::addToHand(Card* cardToAdd) {
-    // Add card to hand and increment card count
+    // Add card to hand
     cards.push_back(cardToAdd);
 
 }
 
 void Hand::deleteFromHand(Card* cardToDelete) {
-    // Remove card from player's hand and decrement count
-    // auto it = std::find(cards->begin(), cards->end(), *cardToDelete);
-    // if(it != cards->end()){
-    //     cards->erase(it);
-    // }
-    
+    string* deleteCardName = cardToDelete->getCardName();
 
     //iterate through hand and find the card index
     for(int i = 0; i < cards.size(); i++) {
         Card* currentCard = cards.at(i);
+        string* currCardName = currentCard->getCardName();
 
-        Card currCard = *currentCard;
-        Card deleteCard = *cardToDelete;
-
-        if (&currCard == &deleteCard) {
+        // delete the card
+        if (*deleteCardName == *currCardName) {
             cards.erase(cards.begin() + i);
             break;
         }
+
+        //delete
+//        delete currentCard;
+//        currentCard = nullptr;
+//        delete currCardName;
+//        currCardName = nullptr;
     }
+
+    //delete
+//    delete deleteCardName;
+//    deleteCardName = nullptr;
+
     
 }
 
-void Hand::print()
-{
-    cout << "This player's hand has " << this->getCardCount() << " cards." << endl;
 
-    //iterate through deck and print every card type
-    if (cards.empty()) {
-        return;
-    } else {
-        for(Card* card : cards) {
-            cout << *card << endl;
-        }
+// DESTRUCTOR
+Hand::~Hand() {
+    //delete every card pointer in hand
+    for (Card* card : cards) {
+        delete card;
+        card = nullptr;
     }
 
-
 }
 
-//Destructor
-Hand::~Hand() {
-}
+/////////////////////////////////////////////// CARD /////////////////////////////////////////////////
 
-///////////////////////////////// CARD ///////////////////////////////////////
-
+// CONSTRUCTOR
 Card::Card(int cardType) {
 
+    // assign card name based on integer parameter
     switch (cardType) {
 
         case 0: {
@@ -247,24 +315,37 @@ Card::Card(int cardType) {
     }
 }
 
+// COPY CONSTRUCTOR
 Card::Card(const Card& copyCard) {
-
+    this->cardName = copyCard.cardName;
 }
 
+// ASSIGNMENT OPERATOR
+Card& Card::operator=(const Card& assignCard)
+{
+    cout << "Copy assignment operator of Card" << endl;
+    this->cardName = assignCard.cardName;
+    return *this;
+}
+
+// STREAM INSERTION OPERATOR
 ostream& operator <<(ostream& os, const Card& card)
 {
-    cout << "This is a " << *card.cardName << " card.";
+    cout << *card.cardName;
     return os;
 }
 
+// GETTERS
 string* Card::getCardName() {
     return cardName;
 }
 
+//SETTERS
 void Card::setCardName(string newCard) {
     *cardName = newCard;
 }
 
+// OTHER
 void Card::play(Player* p1, Deck* deck) {
     //creates an order
     string* order = cardName;
@@ -277,12 +358,13 @@ void Card::play(Player* p1, Deck* deck) {
 
     //return card to deck
     deck->addToDeck(this);
+
+    // delete pointers
+//    delete order;
+//    order = nullptr;
 }
 
-void Card::print(){
-    cout << "This is a " << this->cardName << "card." << endl;
-}
-
+// DESTRUCTORS
 Card::~Card() {
     delete cardName;
     cardName = nullptr;
