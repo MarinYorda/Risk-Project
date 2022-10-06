@@ -62,9 +62,7 @@ class Territory{
 
     // constructors for Territory class
     Territory();
-    Territory(string territoryName, Continent continent);
-    Territory(string territoryName, Continent continent, int noOfArmies);
-    Territory(string territoryName, Continent continent, int noOfArmies, vector <Territory*> adjacent);
+    Territory(string territoryName, Continent* continent);
     Territory(Territory &territory);
     // ~Territory();
 
@@ -90,17 +88,20 @@ class MapLoader{
     public:
     Map* loadMap();
     vector<Continent*> listOfContinents();
+    void addTerritory(string tName, string cName);
 };
 
 
 class Map{
     private:
     vector <Continent*> subgraph;
+    vector <Territory*> allTerritories;
 
     public:
     Map();
     Map(vector <Continent*> subgraph);
     vector <Continent*> getSubgraph();
+    
 
     void setSubgraph(vector<Continent*> sub);
     bool validate();
