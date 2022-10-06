@@ -157,8 +157,6 @@ Map::Map(vector<Continent*> subgraph){
 
 
 
-
-
 // ------------------------- MAP LOADER CLASS ------------------------
 
 class MapLoader{
