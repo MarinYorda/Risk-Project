@@ -109,10 +109,10 @@ using namespace std;
     // Default Constructor
     Territory::Territory(){};
 
-    Territory::Territory(string territoryName, Continent continent,int noOfArmies, vector <Territory*> adjacent){
+    Territory::Territory(string territoryName, Continent continent){
         *this->territoryName = territoryName;
         *this->continent = continent;
-        *this->noOfArmies = noOfArmies;
+        *this->noOfArmies = 0;
         //create a list of adjacent countries of the territory stored in a vector of points 
     };
 
@@ -139,8 +139,8 @@ using namespace std;
         return *this;
     }
 
-// ------------------- Map Class ---------------------
-// ------------------- Getters and Setters ---------------
+// ------------------------ MAP CLASS -------------------------
+// ------------------- GETTERS AND SETTERS -------------------
 vector <Continent*> Map::getSubgraph (){
     return this->subgraph;
 };
@@ -157,11 +157,47 @@ Map::Map(vector<Continent*> subgraph){
 
 
 
-
-
-
+// ------------------------- MAP LOADER CLASS ------------------------
 
 class MapLoader{
+
+    vector<string> stripLine(string line){
+    vector<string> result;
+    string word = "";
+    for (unsigned i = 0; i < line.length(); ++i)
+    {
+        if (i == line.length() - 1)
+        {
+            result.push_back(word);
+        }
+        if (line.at(i) == ',')
+        {
+            result.push_back(word);
+            word = "";
+        }
+        else
+        {
+            word = word + line.at(i);
+        }
+    }
+    return result;
+}
+    void addTerritory(string tName, string cName){
+        vector<Continent*> continents = this->listOfContinents();
+        int pos = 0;
+        for (int i = 0; i < continents.size(); i++)
+        {
+            if(continents[i]->getContinentName() == cName){
+                pos=i;
+            }
+        }
+        Continent* continent = continents[pos];
+        Territory* territory = new Territory(tName,continent);
+        
+
+    }
+    /*This method is gonna create a map after reading the .map files provided by the user 
+    using io streams and return a pointer to the map object*/
     Map* loadMap(){
         cout<<"Enter the name of the .map file you would like to open: "<<endl;
         string fileName;
@@ -177,6 +213,7 @@ class MapLoader{
         ifstream file(fileName);
         string lineText;
         bool atContinents = false;
+        bool atTerritories = false;
         // loop through until we find [CONTINENTS] keyword
         while(!file.eof() && !atContinents){
             getline(file,lineText);
@@ -193,7 +230,7 @@ class MapLoader{
         if(atContinents){
             vector <Continent*> continents;
 
-            while (lineText != " "){
+            while (lineText != " "){ //I dont know if this will work or no -abdur
                 getline(file,lineText);
                 string delimiter = "=";
                 string continentName = lineText.substr(0, lineText.find(delimiter));
@@ -204,7 +241,35 @@ class MapLoader{
             }
             map->setSubgraph(continents);
         }
+
         // next is territories
+        /*I dont know what im doing with my life but here i am trying to read the file to find 
+        territoreis keyword and if i find that i made a function called stripline which will split the string
+        line into a vector of strings so that i can use it as an array and create territories and continents*/
+        while(file.eof() && !atTerritories){
+            getline(file,lineText);
+            if(lineText == "[TERRITORIES]"){
+                atTerritories = true;
+            };
+        };
+
+        if(file.eof() && !atTerritories){
+            cout << "End of File raeched. No Terrirotires found, invalid map!";
+        };
+
+        if(atTerritories){
+            vector <Territory*> territories;
+            while (lineText != " "){ // I dont know when to stop ill ask someone
+            getline(file,lineText);
+            vector<string> currentLine = stripLine(lineText);
+            string countryName = currentLine[0];
+            string continentName = currentLine[3];
+            
+            // addTerritory(countryName);
+
+            }
+
+        }
 
 
 
