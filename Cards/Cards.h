@@ -2,7 +2,6 @@
 #include "../Player/Player.h"
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 using namespace std;
 
 //Forward declarations
@@ -16,12 +15,11 @@ class Deck
 {
     private:
         vector<Card*> cards;
-        unordered_map<int, Hand*> hands; //maps player name to their list of cards (hand)
 
     public:
 
         // CONSTRUCTOR
-        Deck(vector<Player*> players);
+        explicit Deck(const vector<Player*>& players);
 
         // COPY CONSTRUCTOR
         Deck(const Deck& copyDeck); //copy constructor
@@ -34,15 +32,13 @@ class Deck
 
         // GETTERS
         vector<Card*> getCards();
-        unordered_map<int, Hand*> getHands();
         int size();
 
         // SETTERS
         void setCards(vector<Card*> newCards);
-        void setHands(unordered_map<int, Hand*> newHands);
 
         // OTHER
-        void draw(Player* player); // draw from deck
+        void draw(Hand* player); // draw from deck
         void addToDeck(Card* cardToAdd); // place card in deck
 
         //DESTRUCTOR
@@ -72,15 +68,13 @@ class Hand
 
 
         // GETTERS
-        vector<Card*> getHand();
+        vector<Card*> getCards();
         int getCardCount();
 
         // SETTERS
         void setCards(vector<Card*> newCards);
 
         // OTHER
-        void playAllCards(Player* p, Deck* d);
-        void draw(Player* p, Deck* d);
         void addToHand(Card*);
         void deleteFromHand(Card*);
 
@@ -97,7 +91,7 @@ class Card {
 
     public:
         // CONSTRUCTOR
-        Card(int cardType);
+        explicit Card(int cardType);
 
         // COPY CONSTRUCTOR
         Card(const Card& copyCard);
@@ -116,7 +110,7 @@ class Card {
 
         // OTHER
         void play(Player* p, Deck* d); //adds the card to player's order list and puts card back in Deck
-        void print();
+
         
         // DESTRUCTORS
         ~Card();
