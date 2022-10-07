@@ -17,6 +17,8 @@ class GameEngine {
 
     public:
         GameEngine();
+        // COPY CONSTRUCTOR
+        GameEngine(const GameEngine& ge);
         GameEngine& operator=(const GameEngine& ge);
         friend ostream& operator <<(ostream& os, GameEngine& ge);
 

@@ -43,15 +43,23 @@ GameEngine::GameEngine() {
 
 }
 
+// COPY CONSTRUCTOR
+GameEngine::GameEngine(const GameEngine& ge) {
+    cout << "Copy constructor of Game Engine called" << endl;
+    allowedStates = ge.allowedStates;
+    intToStringState = ge.intToStringState;
+
+}
+
 // ASSIGNMENT OPERATOR
 GameEngine& GameEngine::operator=(const GameEngine& ge)
 {
     cout << "Copy assignment operator of Game Engine" << endl;
     this->state = ge.state;
     this->allowedStates = ge.allowedStates;
+    this->intToStringState = ge.intToStringState;
     return *this;
     // TODO: make sure it's right shallow/deep copy
-    // TODO: add copy constructor
 }
 
 // STREAM INSERTION OPERATOR
