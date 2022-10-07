@@ -1,4 +1,4 @@
-1#pragma once
+#pragma once
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -13,14 +13,14 @@ using namespace std;
 
 
 class Continent{
-    private:
+private:
     string* continentName;
     int* bonusValue;
-    vector <Territory*> listofTerritories; 
+    vector <Territory*> listofTerritories;
 
 
     // getter and setter methods for Continent class
-    public:
+public:
     string getContinentName();
     int getBonusValue();
     void setContinentName(string continentName);
@@ -41,8 +41,8 @@ class Continent{
 
 //the Territory class
 class Territory{
-    private:
-    vector <Territory*> adjacentTerritories;
+private:
+    std::vector <Territory*> adjacentTerritories;
     string* territoryName;
     Continent* continent;
     int* noOfArmies;
@@ -50,7 +50,7 @@ class Territory{
     string* playerName;
 
     // getter and setter methods for Territory class
-    public:
+public:
     string getTerritoryName();
     Continent *getContinent();
     int getNoOfArmies();
@@ -62,7 +62,7 @@ class Territory{
 
     // constructors for Territory class
     Territory();
-    Territory(string territoryName, Continent* continent);
+    Territory(string territoryName, Continent *continent);
     Territory(Territory &territory);
     // ~Territory();
 
@@ -85,25 +85,27 @@ class Territory{
 // }
 
 class MapLoader{
-    public:
+public:
     Map* loadMap();
-    vector<Continent*> listOfContinents();
+    std::vector<Continent*> listOfContinents();
     void addTerritory(string tName, string cName);
 };
 
 
 class Map{
-    private:
-    vector <Continent*> subgraph;
-    vector <Territory*> allTerritories;
+private:
+    std::vector <Continent*> subgraph;
+    std::vector <Territory*> allTerritories;
 
-    public:
+public:
     Map();
-    Map(vector <Continent*> subgraph);
-    vector <Continent*> getSubgraph();
-    
+    Map(std::vector <Continent*> subgraph);
+    std::vector <Continent*> getSubgraph();
 
-    void setSubgraph(vector<Continent*> sub);
+
+    void setSubgraph(std::vector<Continent*> sub);
     bool validate();
 };
+
+
 
