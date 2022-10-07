@@ -11,7 +11,9 @@ using namespace std;
 // };
 // the Continent class
 
-
+class Territory;
+class Map;
+class MapLoader;
 class Continent{
 private:
     string* continentName;
@@ -85,7 +87,11 @@ public:
 // }
 
 class MapLoader{
+private:
+    //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
+    Map* realMap;
 public:
+
     Map* loadMap();
     std::vector<Continent*> listOfContinents();
     void addTerritory(string tName, string cName);
@@ -94,16 +100,16 @@ public:
 
 class Map{
 private:
-    std::vector <Continent*> subgraph;
-    std::vector <Territory*> allTerritories;
+    vector <Continent*> subgraph;
+    vector <Territory*> allTerritories;
 
 public:
     Map();
-    Map(std::vector <Continent*> subgraph);
-    std::vector <Continent*> getSubgraph();
-
-
-    void setSubgraph(std::vector<Continent*> sub);
+    Map(vector <Continent*> subgraph);
+    vector <Continent*> getSubgraph();
+    vector <Territory*> getAllTerritories();
+    void setAllTerritories(vector<Territory*> t);
+    void setSubgraph(vector<Continent*> sub);
     bool validate();
 };
 

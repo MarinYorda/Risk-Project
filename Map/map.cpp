@@ -144,7 +144,12 @@ Territory &Territory::operator=(const Territory &t){
 vector <Continent*> Map::getSubgraph (){
     return this->subgraph;
 };
-
+vector <Territory*> Map::getAllTerritories(){
+    return this->allTerritories;
+}
+void Map::setAllTerritories(vector<Territory *> t) {
+    this->allTerritories = t;
+}
 void Map::setSubgraph(vector<Continent*> sub){
     this->subgraph = sub;
 }
@@ -182,18 +187,33 @@ vector<string> stripLine(string line) {
 /*I tried to change this method a bit cuz it showed a bunch of errors on Clion. I hope it works cuz i wasted a lot of time
  * This method is gonna create a territory and ad
 I'm unda the wata pls help me*/
+
+
+//Return a territory instead of void
+//Add an if statement for when the territory found is true, to add a continent  to the territory which was already created
+
 void MapLoader::addTerritory(string tName, string cName){
     vector<Continent*> continents = this->listOfContinents();
-    int pos = 0;
-    for (int i = 0; i < continents.size(); i++)
-    {
-        if(continents[i]->getContinentName() == cName){
-            pos=i;
+    vector<Territory*> f = realMap->getAllTerritories();
+    bool territoryFound = false;
+    for(int i = 0; i < f.size();i++){
+        if(f[i]->getTerritoryName() == tName){
+            territoryFound = true;
         }
     }
-    Continent *continent = continents[pos];
-    Territory* territory = new Territory(tName,continent);
+    if(territoryFound == false) {
+        int pos = 0;
+        for (int i = 0; i < continents.size(); i++) {
+            if (continents[i]->getContinentName() == cName) {
+                pos = i;
+            }
+        }
+        Continent *continent = continents[pos];
+        Territory *territory = new Territory(tName, continent);
 
+        //Adding the territory to the all territories vector
+        realMap->getAllTerritories().push_back(territory);
+    }
 
 }
 /*This method is gonna create a map after reading the .map files provided by the user
@@ -202,12 +222,12 @@ Map* MapLoader::loadMap(){
     cout<<"Enter the name of the .map file you would like to open: "<<endl;
     string fileName;
     cin>> fileName;
-    Map* map = new Map();
+    realMap = new Map();
     string extension = fileName.substr((fileName.length())-4,fileName.length());
     if(extension!=".map"){
         cout<<"The file you entered is not of the .map format, you may try again!";
         // by returning a null map pointer, we can reject all non .map files
-        return map;
+        return realMap;
     }
     // Open the file
     ifstream file(fileName);
@@ -239,7 +259,7 @@ Map* MapLoader::loadMap(){
             Continent* c = new Continent(continentName,bonusValueInt);
             continents.push_back(c);
         }
-        map->setSubgraph(continents);
+        realMap->setSubgraph(continents);
     }
 
     // next is territories
@@ -265,9 +285,8 @@ Map* MapLoader::loadMap(){
             string countryName = currentLine[0];
             string continentName = currentLine[3];
 
-
             addTerritory(countryName, continentName);
-
+            //Add a loop for the adjacent territories.
         }
 
     }
