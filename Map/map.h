@@ -112,6 +112,3 @@ public:
     void setSubgraph(vector<Continent*> sub);
     bool validate();
 };
-
-
-

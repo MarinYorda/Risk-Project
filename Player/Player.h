@@ -10,7 +10,7 @@ class Deck;
 class Hand;
 class Card;
 
-////////////////// PLAYER //////////////
+///////////////////////////////// PLAYER /////////////////////////////////////
 
 class Player {
     private: 
@@ -23,10 +23,16 @@ class Player {
         vector<string*> territories;
 
     public:
-        // CONSTRUCTORS
-        Player(string* pName);
-        Player(const Player& copyPlayer); //copy constructor
-        // Player &operator=(const Player &e);
+        // CONSTRUCTOR
+        explicit Player(string* pName);
+
+        //COPY CONSTRUCTOR
+        Player(const Player& copyPlayer);
+
+        // ASSIGNMENT OPERATOR
+        Player &operator=(const Player &e);
+
+        // STREAM INSERTION OPERATOR
         friend ostream &operator<<(ostream &out, const Player &player);
 
         // GETTERS
@@ -45,14 +51,11 @@ class Player {
         void setOrders(vector<string*> newOrders);
         void setTerritories(vector<string*> newTerritories);
 
-        void addToHand(Card*);
-        void deleteFromHand(Card*);
-        vector<string>* toAttack();
-        vector<string>* toDefend();
+        // OTHER
+        vector<string*> toAttack();
+        vector<string*> toDefend();
         void issueOrder(string* order);
-        void draw();
-        void print();
 
-
+        // DESTRUCTOR
         ~Player();
 };
