@@ -11,16 +11,18 @@ using namespace std;
 // };
 // the Continent class
 
-
+class Territory;
+class Map;
+class MapLoader;
 class Continent{
-    private:
+private:
     string* continentName;
     int* bonusValue;
-    vector <Territory*> listofTerritories; 
+    vector <Territory*> listofTerritories;
 
 
     // getter and setter methods for Continent class
-    public:
+public:
     string getContinentName();
     int getBonusValue();
     void setContinentName(string continentName);
@@ -41,8 +43,8 @@ class Continent{
 
 //the Territory class
 class Territory{
-    private:
-    vector <Territory*> adjacentTerritories;
+private:
+    std::vector <Territory*> adjacentTerritories;
     string* territoryName;
     Continent* continent;
     int* noOfArmies;
@@ -50,7 +52,7 @@ class Territory{
     string* playerName;
 
     // getter and setter methods for Territory class
-    public:
+public:
     string getTerritoryName();
     Continent *getContinent();
     int getNoOfArmies();
@@ -62,7 +64,7 @@ class Territory{
 
     // constructors for Territory class
     Territory();
-    Territory(string territoryName, Continent* continent);
+    Territory(string territoryName, Continent *continent);
     Territory(Territory &territory);
     // ~Territory();
 
@@ -85,25 +87,28 @@ class Territory{
 // }
 
 class MapLoader{
-    public:
+private:
+    //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
+    Map* realMap;
+public:
+
     Map* loadMap();
-    vector<Continent*> listOfContinents();
+    std::vector<Continent*> listOfContinents();
     void addTerritory(string tName, string cName);
 };
 
 
 class Map{
-    private:
+private:
     vector <Continent*> subgraph;
     vector <Territory*> allTerritories;
 
-    public:
+public:
     Map();
     Map(vector <Continent*> subgraph);
     vector <Continent*> getSubgraph();
-    
-
+    vector <Territory*> getAllTerritories();
+    void setAllTerritories(vector<Territory*> t);
     void setSubgraph(vector<Continent*> sub);
     bool validate();
 };
-
