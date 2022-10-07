@@ -1,6 +1,5 @@
 #include "Player.h"
 
-
 void testPlayers() {
     cout << "" << endl;
     cout << "--- Player Test Function ---" << endl;
@@ -87,35 +86,12 @@ void testPlayers() {
     cout << "" << endl;
     cout << *p1 << endl;
 
-    // Deleting all pointers
-    delete testDeck;
-    testDeck = nullptr;
-
-    delete p1;
-    p1 = nullptr;
-
-    for (string* str : p1DefendList) {
-        delete str;
-        str = nullptr;
-    }
-
-    for (string* str : p1AttackList) {
-        delete str;
-        str = nullptr;
-    }
-
-    for (string* ter : playerTerritories) {
-        delete ter;
-        ter = nullptr;
-    }
-
-    // TODO: change delete pointers to classes instead of strings
-
 }
 
-int main() {
-    testPlayers();
-}
+//
+//int main() {
+//    testPlayers();
+//}
 
 
 //

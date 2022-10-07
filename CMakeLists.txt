@@ -18,4 +18,8 @@ add_executable(Risk_Project
         Player/Player.cpp
         Player/Player.h
         Player/PlayerDriver.cpp
+        GameEngine/GameEngine.cpp
+        GameEngine/GameEngine.h
+        GameEngine/GameEngineDriver.cpp
+        GameEngine/GameEngineDriver.h
         helloteam.cpp)

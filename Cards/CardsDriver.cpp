@@ -3,7 +3,6 @@
 #include <algorithm>
 using namespace std;
 
-
 void testCards() {
     cout << "" << endl;
     cout << "--- Cards Test Function ---" << endl;
@@ -102,22 +101,6 @@ void testCards() {
     cout << "Player 2: " << endl;
     cout << *hand2 << endl;
 
-    // Deleting all pointers
-    delete testDeck;
-    testDeck = nullptr;
-
-    cout << "end" ;
-    for (Player* p : players) {
-        delete p;
-        p = nullptr;
-    }
-
-//    delete hand1;
-    hand1 = nullptr;
-//    delete hand2;
-    hand2 = nullptr;
-
-    // TODO: delete all pointers
 }
 
 //int main() {
