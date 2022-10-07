@@ -63,3 +63,20 @@ vectorOfTerritories.push();
 
 add adjacency list to territories
 add territories to continents ...
+
+Verification of Map:
+has one and only one continent: each territory check continent, 
+then check all continents and only one should match. And it should be the same continent
+
+has adjacency:
+
+Example (France vector[0] in the list of territories):
+
+go through the list of all territories
+check the adjacencies of that territory and see if they match the territory we’re looking for
+if they do return true and exit. 
+If not then go to next territory in list of territories, 
+repeat till found. 
+If never found then the map is not connected.
+
+hit run on the program and at the end of the demo session the program will be done :)
