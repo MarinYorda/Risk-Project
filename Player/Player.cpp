@@ -1,21 +1,18 @@
 #include "Player.h"
-#include "../Cards/Cards.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
 using namespace std;
 
-//static int* playerCount; // player count AND id
-//int* id;
-//string* name;
-//Hand* hand;
-//vector<string>* orders;
-//vector<string>* territories;
-   
-// CONSTRUCTORS
+///////////////////////////////// PLAYER /////////////////////////////////////
+
+// Setting static variables
 int zero = 0;
 int* Player::playerCount = &zero;
+// TODO: make sure it's right way to init static vars
+// TODO: how to dealloc static vars?
 
+// CONSTRUCTOR
 Player::Player(string* pName) {
     this->name = new string(*pName);
 
@@ -24,32 +21,68 @@ Player::Player(string* pName) {
     *playerCount += 1;
 
     this->hand = new Hand();
+    // TODO: GO THROUGH EVERY METHOD and replace all orders & territories strings with objects
 
 }
 
+// COPY CONSTRUCTOR
 Player::Player(const Player& copyPlayer) {
+    cout << "Copy constructor of Player called" << endl;
+    this->id = new int(*(copyPlayer.id));
+    this->name = new string(*(copyPlayer.name));
+    this->hand = copyPlayer.hand;
+    this->deck = copyPlayer.deck;
+    this->orders = copyPlayer.orders;
+    this->territories = copyPlayer.territories;
+
+    //TODO: complete copy of OrdersList when class is ready
+    //TODO: complete copy of Territory list when class is ready
+    // TODO: make sure it's right shallow/deep copy
 
 }
 
+// ASSIGNMENT OPERATOR
+ Player& Player::operator=(const Player& copyPlayer) {
+    cout << "Copy assignment operator of Player" << endl;
 
-// Player::Player& operator=(const Player &e) {
+    this->id = copyPlayer.id;
+    this->hand = copyPlayer.hand;
+    this->deck = copyPlayer.deck;
+    this->orders = copyPlayer.orders;
+    this->territories = copyPlayer.territories;
 
-// }
+    //TODO: complete assignment of OrdersList when class is ready
+    //TODO: complete assignment of Territory list when class is ready
 
-ostream &operator<<(ostream &out, const Player &p) {
-    cout << "Player: " << p.name << endl;
-    cout << *p.hand << endl;
+    return *this;
+    // TODO: make sure it's right shallow/deep copy
+ }
 
-    cout << "Orders: " << endl;
-    for(string* str : p.orders) {
-        cout << *str << endl;
+ // STREAM INSERTION OPERATOR
+ostream &operator<<(ostream &out, const Player& p) {
+    cout << "Player name: " << *p.name <<  endl;
+    cout << "Player id: " << *p.id << endl;
+    cout << *p.hand;
+
+    if (p.orders.empty()) {
+        cout << "No orders yet" << endl;
+    } else {
+         cout << "Orders: " << endl;
+         for(string* str : p.orders) {
+             cout << *str << endl;
+         }
     }
 
-    cout << "Territories: " << endl;
-    for(string* str : p.territories) {
-        cout << *str << endl;
+    if (p.territories.empty()) {
+        cout << "No territories yet" << endl;
+    } else {
+         cout << "Territories: " << endl;
+         for(string* str : p.territories) {
+             cout << *str << endl;
+         }
     }
-    
+
+    cout << "" << endl;
     return out;
 }
 
@@ -100,67 +133,28 @@ void Player::setTerritories(vector<string*> newTerritories) {
     territories = newTerritories;
 }
 
-void Player::addToHand(Card* newCard) {
-    hand->addToHand(newCard);
-}
+// OTHER
 
-void Player::deleteFromHand(Card* cardToDelete) {
-    hand->deleteFromHand(cardToDelete);
-}
-
-vector<string>* Player::toAttack() {
-    vector<string>* attTerritories;
-    attTerritories->push_back("North-East");
-    attTerritories->push_back("South-East");
-    attTerritories->push_back("Western");
-    attTerritories->push_back("Southern");
-
+vector<string*> Player::toAttack() {
+    vector<string*> attTerritories;
+    attTerritories.push_back(new string("North-East"));
+    attTerritories.push_back(new string("South-East"));
+    attTerritories.push_back(new string("Western"));
+    attTerritories.push_back(new string("Southern"));
     return attTerritories;
 }
 
-vector<string>* Player::toDefend() {
-    vector<string>* defTerritories;
-    defTerritories->push_back("West");
-    defTerritories->push_back("East");
-    defTerritories->push_back("North");
-    defTerritories->push_back("South");
-
+vector<string*> Player::toDefend() {
+    vector<string*> defTerritories;
+    defTerritories.push_back(new string("West"));
+    defTerritories.push_back(new string("East"));
+    defTerritories.push_back(new string("North"));
+    defTerritories.push_back(new string("South"));
     return defTerritories;
 }
 
 void Player::issueOrder(string* order) {
     orders.push_back(order);
-}
-
-void Player::draw() {
-    hand->draw(this, deck);
-}
-
-void Player::print() {
-    cout << "Player: " << *name <<  endl;
-    cout << *hand;
-    if (orders.empty()) {
-        cout << "No orders yet" << endl;
-    }else {
-        cout << "Orders: " << endl;
-        for(string* str : orders) {
-            cout << *str << endl;
-        }
-    }
-
-
-
-    if (territories.empty()) {
-        cout << "No territories yet" << endl;
-    } else {
-        cout << "Territories: " << endl;
-        for(string* str : territories) {
-            cout << *str << endl;
-        }
-    }
-
-    cout << "" << endl;
-
 }
 
 
@@ -174,16 +168,16 @@ Player::~Player() {
     delete hand;
     hand = nullptr;
 
-    delete deck;
+//    delete deck;
     deck = nullptr;
 
     for(string* str : orders) {
-        delete str;
+//        delete str;
         str = nullptr;
     }
 
     for (string* str : territories) {
-        delete str;
+//        delete str;
         str = nullptr;
     }
 }
