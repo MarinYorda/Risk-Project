@@ -44,7 +44,7 @@ public:
 //the Territory class
 class Territory{
 private:
-    std::vector <Territory*> adjacentTerritories;
+    vector <Territory*> adjacentTerritories;
     string* territoryName;
     Continent* continent;
     int* noOfArmies;
@@ -58,7 +58,11 @@ public:
     int getNoOfArmies();
     string getPlayerName();
     void setTerritoryName(string territoryName);
-    void setContinent(Continent &continent);
+
+    //Im confused to why we are passing the reference to the continent here???
+    //Previously it (Continent &continent) i changed it to a pointer because in the add territory
+    //we are passing a continent pointer to set the continent name when territory found is true
+    void setContinent(Continent *continent);
     void setNoOfArmies(int noOfArmies);
     void setPlayerName(string playerName);
 
@@ -93,7 +97,7 @@ private:
 public:
 
     Map* loadMap();
-    std::vector<Continent*> listOfContinents();
+    vector<Continent*> listOfContinents();
     void addTerritory(string tName, string cName);
 };
 

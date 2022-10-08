@@ -92,8 +92,9 @@ string Territory::getPlayerName(){
 void Territory::setTerritoryName(string territoryName){
     *this->territoryName = territoryName;
 };
-void Territory::setContinent(Continent &continent){
-    *this->continent = continent;
+//Why are we passing the reference to continent here???
+void Territory::setContinent(Continent *continent){
+    this->continent = continent;
 };
 void Territory::setNoOfArmies(int noOfArmies){
     *this->noOfArmies = noOfArmies;
@@ -190,15 +191,17 @@ I'm unda the wata pls help me*/
 
 
 //Return a territory instead of void
-//Add an if statement for when the territory found is true, to add a continent  to the territory which was already created
+//Add an if statement for when the territory found is true, to add a continent to the territory which was already created
 
 void MapLoader::addTerritory(string tName, string cName){
     vector<Continent*> continents = this->listOfContinents();
     vector<Territory*> f = realMap->getAllTerritories();
     bool territoryFound = false;
+    int found = 0;
     for(int i = 0; i < f.size();i++){
         if(f[i]->getTerritoryName() == tName){
             territoryFound = true;
+            found = i;
         }
     }
     if(territoryFound == false) {
@@ -209,6 +212,9 @@ void MapLoader::addTerritory(string tName, string cName){
             }
         }
         Continent *continent = continents[pos];
+        if(territoryFound == true){
+            f[found]->setContinent(continent);
+        }
         Territory *territory = new Territory(tName, continent);
 
         //Adding the territory to the all territories vector
