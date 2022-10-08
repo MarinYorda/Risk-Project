@@ -1,3 +1,0 @@
-/Users/a.rahim/Documents/COMP 345/Assignment/Risk-Project/cmake-build-debug/CMakeFiles/Risk_Project.dir
-/Users/a.rahim/Documents/COMP 345/Assignment/Risk-Project/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/a.rahim/Documents/COMP 345/Assignment/Risk-Project/cmake-build-debug/CMakeFiles/rebuild_cache.dir
