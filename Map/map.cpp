@@ -202,7 +202,7 @@ void MapLoader::addTerritory(string tName, string cName){
         if(f[i]->getTerritoryName() == tName){
             territoryFound = true;
             found = i;
-        }
+        };
     }
     if(territoryFound == false) {
         int pos = 0;

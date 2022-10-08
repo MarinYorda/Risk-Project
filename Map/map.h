@@ -51,7 +51,7 @@ private:
     // this will eventually be a player object
     string* playerName;
 
-    // getter and setter methods for Territory class
+    // getter and setter methods for Territory class.
 public:
     string getTerritoryName();
     Continent *getContinent();
