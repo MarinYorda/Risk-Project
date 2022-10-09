@@ -1,9 +1,19 @@
 Map Class:
-- A method that adds either continents or territories to a vector
 - validate method in map class, that checks:
     1.the map is a connected graph
     2.continents are connected subgraphs
-    3.each country belongs to one and only one continent
-- The map loader must be able to read any map file available on the above-mentioned web page.
-- A driver (free function) named testLoadMaps() that reads many different map files, creates a Map object for valid files and rejects the invalid ones.
+
+    3.each country belongs to one and only one continent (compare the continent name listed on the territory with the continents, list of territories)
+    found =-1
+    list of terrritories -> [0].get continent name
+    list of continents goe through each one
+    if territory in whatever continent matches the cName +1
+
+    -1 error is that territoryt belongs to no continent
+    0 good
+    1 or more it belongs to many continents+
+- A driver (free function) named testLoadMaps() that reads many map files, creates a Map object for valid files and rejects the invalid ones.
+
+
+one object for each
 

@@ -3,6 +3,7 @@
 #include "map.h"
 #include <stack>
 #include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -48,16 +49,16 @@ void Continent :: setBonusValue(int bonusValue){
 Continent::Continent(){};
 
 
-Continent::Continent(string continentName, int bonusValue) {
-    continentName = continentName;
-    bonusValue = bonusValue;
+Continent::Continent(string cName,int bonusValue) {
+    this->continentName = &cName;
+    this->bonusValue = &bonusValue;
 };
 
 //Copy Constructor
-Continent::Continent(Continent &continent){
-    this->continentName = continent.continentName;
-    this->bonusValue = continent.bonusValue;
-};
+//Continent::Continent(Continent const &continent){
+//    this->continentName = continent.continentName;
+//    this->bonusValue = continent.bonusValue;
+//};
 
 
 
@@ -71,8 +72,6 @@ Continent &Continent::operator=(const Continent &t)
     }
     return *this;
 }
-
-
 
 // --------------------- TERRITORY CLASS --------------------------
 
@@ -148,11 +147,11 @@ vector <Continent*> Map::getSubgraph (){
 vector <Territory*> Map::getAllTerritories(){
     return this->allTerritories;
 }
-void Map::setAllTerritories(vector<Territory *> t) {
-    this->allTerritories = t;
+void Map::setAllTerritories(Territory* t) {
+    this->allTerritories.push_back(t);
 }
-void Map::setSubgraph(vector<Continent*> sub){
-    this->subgraph = sub;
+void Map::setSubgraph(Continent sub){
+    this->subgraph.push_back(&sub);
 }
 
 // ----------------- Constructors ----------------
@@ -190,11 +189,10 @@ vector<string> stripLine(string line) {
 I'm unda the wata pls help me*/
 
 
-//Return a territory instead of void
 //Add an if statement for when the territory found is true, to add a continent to the territory which was already created
 
-void MapLoader::addTerritory(string tName, string cName){
-    vector<Continent*> continents = this->listOfContinents();
+Territory* MapLoader::addTerritory(string tName, string cName){
+    vector<Continent*> continents = realMap->getSubgraph();
     vector<Territory*> f = realMap->getAllTerritories();
     bool territoryFound = false;
     int found = 0;
@@ -203,6 +201,12 @@ void MapLoader::addTerritory(string tName, string cName){
             territoryFound = true;
             found = i;
         };
+    }
+    if(territoryFound== false && cName == "adjacent"){
+        Territory* adjacent = new Territory();
+        //add to list of all territories
+        realMap->setAllTerritories(adjacent);
+        return adjacent;
     }
     if(territoryFound == false) {
         int pos = 0;
@@ -218,7 +222,9 @@ void MapLoader::addTerritory(string tName, string cName){
         Territory *territory = new Territory(tName, continent);
 
         //Adding the territory to the all territories vector
-        realMap->getAllTerritories().push_back(territory);
+        realMap->setAllTerritories(territory);
+        continents[pos]->setListofTerritories(territory);
+        return territory;
     }
 
 }
@@ -236,14 +242,21 @@ Map* MapLoader::loadMap(){
         return realMap;
     }
     // Open the file
-    ifstream file(fileName);
+    ifstream file;
+    file.open("C:\\Users\\Nauar Rekmani\\Desktop\\Concordia\\Risk Project\\Risk-Project\\Map\\Asia.map");
+    //ifstream file("./Risk-Project/Asia.map");
+    //file.open;
+
+    if(file.fail()){
+        cout<<"file "<<fileName<<" is open";
+    }
     string lineText;
     bool atContinents = false;
     bool atTerritories = false;
     // loop through until we find [CONTINENTS] keyword
     while(!file.eof() && !atContinents){
         getline(file,lineText);
-        if(lineText == "[CONTINENTS]"){
+        if(lineText == "[Continents]"){
             atContinents = true;
         };
 
@@ -251,21 +264,20 @@ Map* MapLoader::loadMap(){
 
     if(file.eof() && !atContinents){
         cout << "End of File reached. No continents found, invalid map!" <<endl;
+        return realMap;
     };
 
     if(atContinents){
-        vector <Continent*> continents;
-
-        while (lineText != " "){ //I dont know if this will work or no -abdur
-            getline(file,lineText);
+        getline(file,lineText);
+        while (!lineText.empty()){
             string delimiter = "=";
             string continentName = lineText.substr(0, lineText.find(delimiter));
             string bonusValue = lineText.substr(lineText.find(delimiter), lineText.length());
             int bonusValueInt = stoi(bonusValue);
-            Continent* c = new Continent(continentName,bonusValueInt);
-            continents.push_back(c);
+            Continent continent(continentName,bonusValueInt);
+            realMap->setSubgraph(continent);
+            getline(file,lineText);
         }
-        realMap->setSubgraph(continents);
     }
 
     // next is territories
@@ -274,34 +286,87 @@ Map* MapLoader::loadMap(){
     line into a vector of strings so that i can use it as an array and create territories and continents*/
     while(file.eof() && !atTerritories){
         getline(file,lineText);
-        if(lineText == "[TERRITORIES]"){
+        if(lineText == "[Territories]"){
             atTerritories = true;
         };
     };
 
     if(file.eof() && !atTerritories){
         cout << "End of File reached. No Territories found, invalid map!";
+        return realMap;
     };
 
     if(atTerritories){
-        vector <Territory*> territories;
-        while (lineText != " "){ // I dont know when to stop ill ask someone
-            getline(file,lineText);
-            vector<string> currentLine = stripLine(lineText);
-            string countryName = currentLine[0];
-            string continentName = currentLine[3];
-
-            addTerritory(countryName, continentName);
-            //Add a loop for the adjacent territories.
+        while (!file.eof()) {
+            getline(file, lineText);
+            if (lineText != " ") {
+                vector<string> currentLine = stripLine(lineText);
+                string countryName = currentLine[0];
+                string continentName = currentLine[3];
+                Territory *t = addTerritory(countryName, continentName);
+                for (int i = 4; i < currentLine.size(); i++) {
+                    Territory *a = addTerritory(currentLine[i], "adjacent");
+                    t->setAdjacentTerritories(a);
+                }
+            }
         }
+    }
+};
+
+bool Map::validate(Map m) {
+    bool oneToOne = false;
+//    int found = -1;
+//    for(int i=0; i<m.getSubgraph().size();i++) {
+//        string territoryName = m.getAllTerritories()[i]->getTerritoryName();
+//        string continentName = m.getAllTerritories()[i]->getContinent()->getContinentName();
+//        for(int j=0; j<m.getSubgraph().size();j++) {
+//            for (int k = 0; k < m.getSubgraph()[j]->getListofTerritories().size(); k++) {
+//                if (m.getSubgraph()[j]->getListofTerritories()[k]->getTerritoryName() == territoryName) {
+//                    found++;
+//                }
+//            }
+//        }
+//    }
+//
+//    if(found == 0){
+//        return true;
+//    }
+//    return false;
+
+   // Going over the list of all the territories and inside the second for lopp checking all the territories left inside the loop
+    for(int i = 0; i<m.getAllTerritories().size();i++){
+        string territoryName = m.getAllTerritories()[i]->getTerritoryName();
+        for(int j=i+1; j<m.getAllTerritories().size();j++){
+            if(territoryName == m.getAllTerritories()[j]->getTerritoryName()){
+                oneToOne = false;
+            }
+        }
+    }
+    oneToOne = true;
+
+
+    int connectedSubgraphs = m.getSubgraph().size();
+    vector<string> continents;
+    for(int i = 0; i<m.getAllTerritories().size();i++){
 
     }
 
+    //start at 0, go through adj, if not same continent,
+    //set this one to be the search territory, and check its adj for a continent different from first and second
 
 
 
-};
+    // go through each territory, holding the continent name and territory name.
+    // Then go through each continent checking to see that the territory name doesn't show up unless the continent names match
 
-vector<Continent*> MapLoader:: listOfContinents(){
 
-};
+    //get continent.get territtory
+
+
+
+
+    //1.the map is a connected graph
+    //2.continents are connected subgraphs
+    //3.each country belongs to one and only one continent (compare the continent name listed on the territory with the continents, list of territories)
+}
+

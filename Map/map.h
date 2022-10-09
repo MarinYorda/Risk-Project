@@ -32,7 +32,7 @@ public:
     Continent();
     Continent(string continentName, int bonusValue);
     Continent(string continentName, int bonusValue, vector<Territory*> t);
-    Continent(Continent &continent);
+    //Continent(Continent continent);
     // ~Continent();
 
     //Overloads
@@ -97,8 +97,8 @@ private:
 public:
 
     Map* loadMap();
-    vector<Continent*> listOfContinents();
-    void addTerritory(string tName, string cName);
+//    vector<Continent*> listOfContinents();
+    Territory* addTerritory(string tName, string cName);
 };
 
 
