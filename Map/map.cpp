@@ -150,8 +150,8 @@ vector <Territory*> Map::getAllTerritories(){
 void Map::setAllTerritories(Territory* t) {
     this->allTerritories.push_back(t);
 }
-void Map::setSubgraph(Continent sub){
-    this->subgraph.push_back(&sub);
+void Map::setSubgraph(Continent *sub){
+    this->subgraph.push_back(sub);
 }
 
 // ----------------- Constructors ----------------
@@ -271,11 +271,12 @@ Map* MapLoader::loadMap(){
         getline(file,lineText);
         while (!lineText.empty()){
             string delimiter = "=";
-            string continentName = lineText.substr(0, lineText.find(delimiter));
-            string bonusValue = lineText.substr(lineText.find(delimiter), lineText.length());
-            int bonusValueInt = stoi(bonusValue);
-            Continent continent(continentName,bonusValueInt);
-            realMap->setSubgraph(continent);
+            string *continentName = new string (lineText.substr(0, lineText.find(delimiter)));
+            int *bonusValue = new  int (stoi(lineText.substr(lineText.find(delimiter)+1, lineText.length())));
+            Continent continent(continentName,bonusValue);
+            realMap->setSubgraph(&continent);
+            continentName = nullptr;
+            bonusValue = nullptr;
             getline(file,lineText);
         }
     }
@@ -303,7 +304,8 @@ Map* MapLoader::loadMap(){
                 vector<string> currentLine = stripLine(lineText);
                 string countryName = currentLine[0];
                 string continentName = currentLine[3];
-                Territory *t = addTerritory(countryName, continentName);
+                Territory *t = new Territory;
+                t = (addTerritory(countryName, continentName));
                 for (int i = 4; i < currentLine.size(); i++) {
                     Territory *a = addTerritory(currentLine[i], "adjacent");
                     t->setAdjacentTerritories(a);
