@@ -41,6 +41,12 @@ void Continent::setContinentName(string continentName){
 void Continent :: setBonusValue(int bonusValue){
     *this->bonusValue = bonusValue;
 };
+void Continent::setListofTerritories(Territory *t) {
+    this->listofTerritories.push_back(t);
+}
+vector <Territory*> Continent::getListofTerritories(){
+    return this->listofTerritories;
+}
 
 
 
@@ -101,13 +107,21 @@ void Territory::setNoOfArmies(int noOfArmies){
 void Territory::setPlayerName(string playerName){
     *this->playerName = playerName;
 }
-
+void Territory::setAdjacentTerritories(Territory* aT){
+    this->adjacentTerritories.push_back(aT);
+}
+vector<Territory*> Territory::getAdjacentTerritories(){
+    return this->adjacentTerritories;
+}
 
 
 // --------------------- CONSTRUCTORS -------------------------
 
 // Default Constructor
 Territory::Territory(){};
+Territory::Territory(string territoryName){
+    *this->territoryName = territoryName;
+}
 
 Territory::Territory(string territoryName, Continent *continent){
     *this->territoryName = territoryName;
@@ -195,6 +209,7 @@ Territory* MapLoader::addTerritory(string tName, string cName){
     vector<Continent*> continents = realMap->getSubgraph();
     vector<Territory*> f = realMap->getAllTerritories();
     bool territoryFound = false;
+    //Continent *continent;
     int found = 0;
     for(int i = 0; i < f.size();i++){
         if(f[i]->getTerritoryName() == tName){
@@ -215,16 +230,26 @@ Territory* MapLoader::addTerritory(string tName, string cName){
                 pos = i;
             }
         }
-        Continent *continent = continents[pos];
-        if(territoryFound == true){
-            f[found]->setContinent(continent);
-        }
-        Territory *territory = new Territory(tName, continent);
+        //continent = continents[pos];
+        Territory* territory = new Territory(tName, continents[pos]);
 
         //Adding the territory to the all territories vector
         realMap->setAllTerritories(territory);
         continents[pos]->setListofTerritories(territory);
         return territory;
+    }
+    if(territoryFound == true){
+        if(f[found]->getContinent() == nullptr){
+            int pos = 0;
+            for (int i = 0; i < continents.size(); i++) {
+                if (continents[i]->getContinentName() == cName) {
+                    pos = i;
+                }
+            }
+            f[found]->setContinent(continents[pos]);
+            continents[pos]->setListofTerritories(f[found]);
+        }
+        return f[found];
     }
 
 }
@@ -261,7 +286,7 @@ Map* MapLoader::loadMap(){
         };
 
     };
-
+// -----------------
     if(file.eof() && !atContinents){
         cout << "End of File reached. No continents found, invalid map!" <<endl;
         return realMap;
@@ -281,11 +306,8 @@ Map* MapLoader::loadMap(){
         }
     }
 
-    // next is territories
-    /*I dont know what im doing with my life but here i am trying to read the file to find
-    territories keyword and if i find that i made a function called stripline which will split the string
-    line into a vector of strings so that i can use it as an array and create territories and continents*/
-    while(file.eof() && !atTerritories){
+   // ------------------------- STARTING TO READ THE TERRITORIES ------------------------
+    while(!file.eof() && !atTerritories){
         getline(file,lineText);
         if(lineText == "[Territories]"){
             atTerritories = true;

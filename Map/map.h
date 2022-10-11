@@ -27,6 +27,10 @@ public:
     int getBonusValue();
     void setContinentName(string continentName);
     void setBonusValue(int bonusValue);
+    void setListofTerritories(Territory* t);
+    vector <Territory*> getListofTerritories();
+    //void setContinentTerritories (); set a vector to hold the countries from a continent
+
 
     // constructors for Continent class
     Continent();
@@ -58,6 +62,8 @@ public:
     int getNoOfArmies();
     string getPlayerName();
     void setTerritoryName(string territoryName);
+    void setAdjacentTerritories(Territory* aT);
+    vector<Territory*> getAdjacentTerritories();
 
     //Im confused to why we are passing the reference to the continent here???
     //Previously it (Continent &continent) i changed it to a pointer because in the add territory
@@ -68,6 +74,7 @@ public:
 
     // constructors for Territory class
     Territory();
+    Territory(string territoryName);
     Territory(string territoryName, Continent *continent);
     Territory(Territory &territory);
     // ~Territory();
@@ -112,7 +119,7 @@ public:
     Map(vector <Continent*> subgraph);
     vector <Continent*> getSubgraph();
     vector <Territory*> getAllTerritories();
-    void setAllTerritories(vector<Territory*> t);
-    void setSubgraph(vector<Continent*> sub);
-    bool validate();
+    void setAllTerritories(Territory* t);
+    void setSubgraph(Continent *sub);
+    bool validate(Map m);
 };
