@@ -17,3 +17,5 @@ Map Class:
 
 one object for each
 
+
+change to add player class

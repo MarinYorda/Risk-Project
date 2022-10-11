@@ -120,14 +120,14 @@ void Territory::setAdjacentTerritories(Territory* aT){
 
 // Default Constructor
 Territory::Territory(){};
-Territory::Territory(string territoryName){
-    *this->territoryName = territoryName;
+Territory::Territory(string* territoryName){
+    this->territoryName = territoryName;
+    this->continent = NULL;
 }
 
-Territory::Territory(string territoryName, Continent *continent){
-    *this->territoryName = territoryName;
+Territory::Territory(string *territoryName, Continent *continent){
+    this->territoryName = territoryName;
     this->continent = continent;
-    *this->noOfArmies = 0;
     //create a list of adjacent countries of the territory stored in a vector of points
 };
 
@@ -213,14 +213,16 @@ Territory* MapLoader::addTerritory(string tName, string cName){
     bool territoryFound = false;
     //Continent *continent;
     int found = 0;
+    string* tnamePointer = new string(tName);
     for(int i = 0; i < f.size();i++){
         if(f[i]->getTerritoryName() == tName){
             territoryFound = true;
             found = i;
+            break;
         };
     }
     if(territoryFound== false && cName == "adjacent"){
-        Territory* adjacent = new Territory();
+        Territory* adjacent = new Territory(tnamePointer);
         //add to list of all territories
         realMap->setAllTerritories(adjacent);
         return adjacent;
@@ -230,10 +232,11 @@ Territory* MapLoader::addTerritory(string tName, string cName){
         for (int i = 0; i < continents.size(); i++) {
             if (continents[i]->getContinentName() == cName) {
                 pos = i;
+                break;
             }
         }
         //continent = continents[pos];
-        Territory* territory = new Territory(tName, continents[pos]);
+        Territory* territory = new Territory(tnamePointer, continents[pos]);
 
         //Adding the territory to the all territories vector
         realMap->setAllTerritories(territory);
@@ -241,11 +244,12 @@ Territory* MapLoader::addTerritory(string tName, string cName){
         return territory;
     }
     if(territoryFound == true){
-        if(f[found]->getContinent() == nullptr){
+        if(f[found]->getContinent()== NULL){
             int pos = 0;
             for (int i = 0; i < continents.size(); i++) {
                 if (continents[i]->getContinentName() == cName) {
                     pos = i;
+                    break;
                 }
             }
             f[found]->setContinent(continents[pos]);
@@ -263,15 +267,15 @@ Map* MapLoader::loadMap(){
     cin>> fileName;
     realMap = new Map();
     string extension = fileName.substr((fileName.length())-4,fileName.length());
-    if(extension!=".map"){
-        cout<<"The file you entered is not of the .map format, you may try again!";
-        // by returning a null map pointer, we can reject all non .map files
-        return realMap;
-        //loop in driver to ensure we re-prompt user for the file name
-    }
+//    if(extension!=".map"){
+//        cout<<"The file you entered is not of the .map format, you may try again!";
+//        // by returning a null map pointer, we can reject all non .map files
+//        return realMap;
+//        //loop in driver to ensure we re-prompt user for the file name
+//    }
     // Open the file
     ifstream file;
-    file.open("C:\\Users\\Nauar Rekmani\\Desktop\\Concordia\\Risk Project\\Risk-Project\\Map\\Asia.map");
+    file.open(fileName);
     //ifstream file("./Risk-Project/Asia.map");
     //file.open;dd
 
@@ -289,7 +293,7 @@ Map* MapLoader::loadMap(){
         };
 
     };
-// -----------------
+// ----------------- -
     if(file.eof() && !atContinents){
         cout << "End of File reached. No continents found, invalid map!" <<endl;
         return realMap;
@@ -301,10 +305,14 @@ Map* MapLoader::loadMap(){
             string delimiter = "=";
             string *continentName = new string (lineText.substr(0, lineText.find(delimiter)));
             int *bonusValue = new  int (stoi(lineText.substr(lineText.find(delimiter)+1, lineText.length())));
-            Continent continent(continentName,bonusValue);
-            realMap->setSubgraph(&continent);
+            Continent* continent = new Continent(continentName,bonusValue);
+            realMap->setSubgraph(continent);
             continentName = nullptr;
+            delete continentName;
             bonusValue = nullptr;
+            delete bonusValue;
+            continent = nullptr;
+            delete continent;
             getline(file,lineText);
         }
     }
@@ -329,15 +337,19 @@ Map* MapLoader::loadMap(){
                 vector<string> currentLine = stripLine(lineText);
                 string countryName = currentLine[0];
                 string continentName = currentLine[3];
-                Territory *t = new Territory;
-                t = (addTerritory(countryName, continentName));
+                Territory *t = (addTerritory(countryName, continentName));
                 for (int i = 4; i < currentLine.size(); i++) {
                     Territory *a = addTerritory(currentLine[i], "adjacent");
                     t->setAdjacentTerritories(a);
+                    a = nullptr;
+                    delete a;
                 }
+                t = nullptr;
+                delete t;
             }
         }
     }
+    return realMap;
 };
 
 bool Map::alreadyVisited(Territory* t, vector <Territory*> placesVisited) {
