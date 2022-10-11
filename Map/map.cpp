@@ -30,7 +30,7 @@ ostream &operator<<(ostream &output, Map &obj)
 // ------------------ GETTERS AND SETTERS ----------------------
 
 string Continent::getContinentName(){
-    return *this->continentName;
+     return *this->continentName;
 };
 int Continent::getBonusValue(){
     return *this->bonusValue;
@@ -183,8 +183,9 @@ Map::Map(vector<Continent*> subgraph){
 vector<string> stripLine(string line) {
     vector<string> result;
     string word = "";
-    for (unsigned i = 0; i < line.length(); ++i) {
-        if (i == line.length() - 1) {
+    for (unsigned i = 0; i < line.length(); i++) {
+        if (i == line.length()-1) {
+            word=word +line.at(i);
             result.push_back(word);
         }
         if (line.at(i) == ',') {
