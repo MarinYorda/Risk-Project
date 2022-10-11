@@ -358,6 +358,7 @@ bool Map::validate(Map m) {
 //    }
 //    return false;
 
+
    // Going over the list of all the territories and inside the second for lopp checking all the territories left inside the loop
     for(int i = 0; i<m.getAllTerritories().size();i++){
         string territoryName = m.getAllTerritories()[i]->getTerritoryName();
