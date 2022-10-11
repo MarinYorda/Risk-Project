@@ -73,8 +73,8 @@ public:
 
     // constructors for Territory class
     Territory();
-    Territory(string territoryName);
-    Territory(string territoryName, Continent *continent);
+    Territory(string* territoryName);
+    Territory(string *territoryName, Continent *continent);
     Territory(Territory &territory);
     // ~Territory();
 
@@ -121,4 +121,6 @@ public:
     void setAllTerritories(Territory* t);
     void setSubgraph(Continent *sub);
     bool validate(Map m);
+    void validateConnectedMap(Territory *t, vector <Territory*> placesVisited);
+    bool alreadyVisited (Territory* t, vector <Territory*> placesVisited);
 };

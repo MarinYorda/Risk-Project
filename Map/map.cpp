@@ -94,6 +94,9 @@ int Territory::getNoOfArmies(){
 string Territory::getPlayerName(){
     return *this->playerName;
 }
+vector <Territory*> Territory:: getAdjacentTerritories(){
+    return this->adjacentTerritories;
+}
 void Territory::setTerritoryName(string territoryName){
     *this->territoryName = territoryName;
 };
@@ -110,9 +113,7 @@ void Territory::setPlayerName(string playerName){
 void Territory::setAdjacentTerritories(Territory* aT){
     this->adjacentTerritories.push_back(aT);
 }
-vector<Territory*> Territory::getAdjacentTerritories(){
-    return this->adjacentTerritories;
-}
+
 
 
 // --------------------- CONSTRUCTORS -------------------------
@@ -339,6 +340,27 @@ Map* MapLoader::loadMap(){
     }
 };
 
+bool Map::alreadyVisited(Territory* t, vector <Territory*> placesVisited) {
+    for (Territory* territory: placesVisited) {
+        if(territory->getTerritoryName() == t->getTerritoryName()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Map::validateConnectedMap(Territory *current, vector <Territory*> placesVisited) {
+
+    if (!alreadyVisited(current, placesVisited)) {
+        placesVisited.push_back(current);
+    }
+
+    for (Territory *neighbor: current->getAdjacentTerritories()) {
+        validateConnectedMap (neighbor, placesVisited);
+    }
+
+}
 bool Map::validate(Map m) {
     bool oneToOne = false;
 //    int found = -1;
@@ -358,6 +380,15 @@ bool Map::validate(Map m) {
 //        return true;
 //    }
 //    return false;
+
+
+    vector <Territory*> placesVisited;
+    validateConnectedMap(m.getAllTerritories()[0], placesVisited);
+    if (placesVisited.size() != m.getAllTerritories().size()) {
+        return false;
+    }
+    //TODO: check territories are unique before checking they're all connected
+
 
 
    // Going over the list of all the territories and inside the second for lopp checking all the territories left inside the loop
