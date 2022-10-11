@@ -271,7 +271,7 @@ Map* MapLoader::loadMap(){
     ifstream file;
     file.open("C:\\Users\\Nauar Rekmani\\Desktop\\Concordia\\Risk Project\\Risk-Project\\Map\\Asia.map");
     //ifstream file("./Risk-Project/Asia.map");
-    //file.open;
+    //file.open;dd
 
     if(file.fail()){
         cout<<"file "<<fileName<<" is open";
