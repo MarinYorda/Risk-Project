@@ -20,7 +20,6 @@ private:
     int* bonusValue;
     vector <Territory*> listofTerritories;
 
-
     // getter and setter methods for Continent class
 public:
     string getContinentName();
@@ -34,8 +33,8 @@ public:
 
     // constructors for Continent class
     Continent();
-    Continent(string continentName, int bonusValue);
-    Continent(string continentName, int bonusValue, vector<Territory*> t);
+    Continent(string *continentName, int *bonusValue);
+    //Continent(string *continentName, int bonusValue, vector<Territory*> t);
     //Continent(Continent continent);
     // ~Continent();
 

@@ -55,9 +55,9 @@ vector <Territory*> Continent::getListofTerritories(){
 Continent::Continent(){};
 
 
-Continent::Continent(string cName,int bonusValue) {
-    this->continentName = &cName;
-    this->bonusValue = &bonusValue;
+Continent::Continent(string *cName,int *bonusValue) {
+    this->continentName = cName;
+    this->bonusValue = bonusValue;
 };
 
 //Copy Constructor
@@ -265,6 +265,7 @@ Map* MapLoader::loadMap(){
         cout<<"The file you entered is not of the .map format, you may try again!";
         // by returning a null map pointer, we can reject all non .map files
         return realMap;
+        //loop in driver to ensure we re-prompt user for the file name
     }
     // Open the file
     ifstream file;
