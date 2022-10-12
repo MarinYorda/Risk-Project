@@ -77,7 +77,7 @@ public:
 
 class MapLoader{
 private:
-    //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
+ //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
     Map* realMap;
 public:
     Map* loadMap();
@@ -102,8 +102,8 @@ public:
     vector <Territory*> getAllTerritories();
     void setAllTerritories(Territory* t);
     void setSubgraph(Continent *sub);
-    bool validate(Map m);
-    void validateConnectedMap(Territory *t, vector <Territory*> placesVisited);
+    bool validate();
+    void validateConnectedMap(Territory *t, vector <Territory*> &placesVisited);
     bool alreadyVisited (Territory* t, vector <Territory*> placesVisited);
 
     //Overloads

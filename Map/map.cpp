@@ -142,7 +142,7 @@ Territory::Territory(Territory &territory){
 
 
 // --------------------- OVERLOADING ASSIGNMENT OPERATOR -----------------
-//Confused about pointers so if we have references instead of values i know where to look
+
 Territory &Territory::operator=(const Territory &t){
     territoryName = t.territoryName;
     noOfArmies = t.noOfArmies;
@@ -223,7 +223,6 @@ Territory* MapLoader::addTerritory(string tName, string cName){
     vector<Continent*> continents = realMap->getSubgraph();
     vector<Territory*> f = realMap->getAllTerritories();
     bool territoryFound = false;
-    //Continent *continent;
     int found = 0;
     string* tnamePointer = new string(tName);
     for(int i = 0; i < f.size();i++){
@@ -276,7 +275,6 @@ Territory* MapLoader::addTerritory(string tName, string cName){
         realMap->setAllTerritories(territory);
         return territory;
     }
-
 }
 
 
@@ -402,91 +400,58 @@ Map* MapLoader::loadMap(){
     return realMap;
 };
 
-bool Map::alreadyVisited(Territory* t, vector <Territory*> placesVisited) {
-    for (Territory* territory: placesVisited) {
-        if(territory->getTerritoryName() == t->getTerritoryName()) {
-            return true;
-        }
+//recursive algorithm to ensure that the map is connected
+void Map::validateConnectedMap(Territory *current, vector <Territory*> &placesVisited) {
+
+    //prevent adding duplicate names of the same territory
+    if (alreadyVisited(current, placesVisited)) {
+        return;
     }
+    //pushing the territories into the placesVisited vector
+    placesVisited.push_back(current);
 
-    return false;
-}
-
-void Map::validateConnectedMap(Territory *current, vector <Territory*> placesVisited) {
-
-    if (!alreadyVisited(current, placesVisited)) {
-        placesVisited.push_back(current);
-    }
-
+    //recursive part of the method to navigate through all territories
     for (Territory *neighbor: current->getAdjacentTerritories()) {
         validateConnectedMap (neighbor, placesVisited);
     }
 
 }
-bool Map::validate(Map m) {
-    bool oneToOne = false;
-//    int found = -1;
-//    for(int i=0; i<m.getSubgraph().size();i++) {
-//        string territoryName = m.getAllTerritories()[i]->getTerritoryName();
-//        string continentName = m.getAllTerritories()[i]->getContinent()->getContinentName();
-//        for(int j=0; j<m.getSubgraph().size();j++) {
-//            for (int k = 0; k < m.getSubgraph()[j]->getListofTerritories().size(); k++) {
-//                if (m.getSubgraph()[j]->getListofTerritories()[k]->getTerritoryName() == territoryName) {
-//                    found++;
-//                }
-//            }
-//        }
-//    }
-//
-//    if(found == 0){
-//        return true;
-//    }
-//    return false;
 
-
-    vector <Territory*> placesVisited;
-    validateConnectedMap(m.getAllTerritories()[0], placesVisited);
-    if (placesVisited.size() != m.getAllTerritories().size()) {
-        return false;
+//method to ensure that when going through the recursive algorith, we do not assign duplicate territories onto the list
+bool Map::alreadyVisited(Territory* t, vector <Territory*> placesVisited) {
+    //checks if the place is already visited and if it is, prevents if from being added to the list
+    for (Territory* territory: placesVisited) {
+        if(territory->getTerritoryName() == t->getTerritoryName()) {
+            return true;
+        }
     }
-    //TODO: check territories are unique before checking they're all connected
+    return false;
+}
+//validate method to ensure that the map can be used
+bool Map::validate() {
 
-
-
-   // Going over the list of all the territories and inside the second for lopp checking all the territories left inside the loop
-    for(int i = 0; i<m.getAllTerritories().size();i++){
-        string territoryName = m.getAllTerritories()[i]->getTerritoryName();
-        for(int j=i+1; j<m.getAllTerritories().size();j++){
-            if(territoryName == m.getAllTerritories()[j]->getTerritoryName()){
-                oneToOne = false;
+    //validate method to ensure that no duplicate territories are found in different continents
+    for(int i = 0; i<this->getAllTerritories().size();i++){
+        string territoryName = this->getAllTerritories()[i]->getTerritoryName();
+        for(int j=i+1; j<this->getAllTerritories().size();j++){
+            if(territoryName == this->getAllTerritories()[j]->getTerritoryName()){
+                cout << "A duplicated territory was found within the map, it is an invalid map." <<endl;
+                return false;
             }
         }
     }
-    oneToOne = true;
+    //vector of placesVisited to keep track when validating the map
+    vector <Territory*> placesVisited;
 
-
-    int connectedSubgraphs = m.getSubgraph().size();
-    vector<string> continents;
-    for(int i = 0; i<m.getAllTerritories().size();i++){
-
+    //starting condition to check if the map is valid
+    validateConnectedMap(this->getAllTerritories()[0], placesVisited);
+    if (placesVisited.size() != this->getAllTerritories().size()) {
+        cout << "The map is not connected, it is invalid." <<endl;
+        return false;
     }
 
-    //start at 0, go through adj, if not same continent,
-    //set this one to be the search territory, and check its adj for a continent different from first and second
+    cout << "The map is valid" << endl;
+    return true;
 
-
-
-    // go through each territory, holding the continent name and territory name.
-    // Then go through each continent checking to see that the territory name doesn't show up unless the continent names match
-
-
-    //get continent.get territtory
-
-
-
-
-    //1.the map is a connected graph
-    //2.continents are connected subgraphs
-    //3.each country belongs to one and only one continent (compare the continent name listed on the territory with the continents, list of territories)
 }
 
