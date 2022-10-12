@@ -3,14 +3,6 @@
 #include <vector>
 using namespace std;
 
-// // the Node class
-// class Node{
-//     private:
-//     Territory* territory;
-//     vector <string> adjacentTerritory;
-// };
-// the Continent class
-
 class Territory;
 class Map;
 class MapLoader;
@@ -34,13 +26,12 @@ public:
     // constructors for Continent class
     Continent();
     Continent(string *continentName, int *bonusValue);
-    //Continent(string *continentName, int bonusValue, vector<Territory*> t);
-    //Continent(Continent continent);
+    Continent(Continent &continent);
     // ~Continent();
 
     //Overloads
     Continent& operator=(const Continent& t); //Overload assignment operator
-    friend ostream& operator<<(ostream& output, Continent& object); //Overload stream insertion
+    friend ostream& operator<<(ostream& output, Continent& obj); //Overload stream insertion
 
 };
 
@@ -80,31 +71,21 @@ public:
 
     //Overloads
     Territory& operator=(const Territory& t); //Overload assignment operator
-    friend ostream& operator<<(ostream& output, Territory& object); //Overload stream insertion
+    friend ostream& operator<<(ostream& output, Territory& obj); //Overload stream insertion
 
 };
-
-
-// class Node{
-//     private:
-//     Territory *data;
-//     vector <string*> edges;
-
-//     //constructors and destructors
-//     Node();
-//     Node(Territory t);
-//     Node(Territory t, )dd
-// }
 
 class MapLoader{
 private:
     //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
     Map* realMap;
 public:
-
     Map* loadMap();
-//    vector<Continent*> listOfContinents();
     Territory* addTerritory(string tName, string cName);
+
+    //Overloading operators
+    MapLoader& operator=(const MapLoader& m);
+    friend ostream& operator<<(ostream& output, MapLoader& obj);
 };
 
 
@@ -116,6 +97,7 @@ private:
 public:
     Map();
     Map(vector <Continent*> subgraph);
+    Map(Map& map);
     vector <Continent*> getSubgraph();
     vector <Territory*> getAllTerritories();
     void setAllTerritories(Territory* t);
@@ -123,4 +105,8 @@ public:
     bool validate(Map m);
     void validateConnectedMap(Territory *t, vector <Territory*> placesVisited);
     bool alreadyVisited (Territory* t, vector <Territory*> placesVisited);
+
+    //Overloads
+    Map& operator=(const Map& map);
+    friend ostream& operator<<(ostream& output, Map& obj);
 };

@@ -10,7 +10,7 @@ using namespace std;
 // --------------- OVERLOADING INSERTION STREAM OPERATORS ---------------
 
 ostream &operator<<(ostream &output, Continent &obj){
-    output << obj.getContinentName() << endl;
+    output << obj.getContinentName() <<" has the bonus value of " << endl;
     return output;
 }
 
@@ -20,8 +20,12 @@ ostream &operator<<(ostream &output, Territory &obj){
 }
 ostream &operator<<(ostream &output, Map &obj)
 {
-    output << "The Map has " << obj.getSubgraph().size() << " continents." << endl;
+    output << "The Map has " << obj.getSubgraph().size() << " continents and " << obj.getAllTerritories().size()<< " territories"<< endl;
     return output;
+}
+ostream &operator<<(ostream &output, MapLoader &obj)
+{
+    output << "Map is being Loaded!" <<endl;
 }
 
 
@@ -53,29 +57,24 @@ vector <Territory*> Continent::getListofTerritories(){
 // ------------------- CONSTRUCTORS ----------------------
 //Default constructor
 Continent::Continent(){};
-
-
 Continent::Continent(string *cName,int *bonusValue) {
     this->continentName = cName;
     this->bonusValue = bonusValue;
 };
-
 //Copy Constructor
-//Continent::Continent(Continent const &continent){
-//    this->continentName = continent.continentName;
-//    this->bonusValue = continent.bonusValue;
-//};
+Continent::Continent(Continent& continent){
+    this->continentName = continent.continentName;
+    this->bonusValue = continent.bonusValue;
+};
 
 
 
 // ---------------- OVERLOADING ASSIGNMENT OPERATORS -----------------
 
-Continent &Continent::operator=(const Continent &t)
-{
-    if (this != &t)
-    {
-        continentName = t.continentName;
-    }
+Continent &Continent::operator=(const Continent &t){
+    continentName = t.continentName;
+    bonusValue = t.bonusValue;
+
     return *this;
 }
 
@@ -91,8 +90,8 @@ Continent *Territory::getContinent(){
 int Territory::getNoOfArmies(){
     return *this->noOfArmies;
 };
-string Territory::getPlayerName(){
-    return *this->playerName;
+Player* Territory::getPlayer(){
+    return this->player;
 }
 vector <Territory*> Territory:: getAdjacentTerritories(){
     return this->adjacentTerritories;
@@ -107,8 +106,8 @@ void Territory::setContinent(Continent *continent){
 void Territory::setNoOfArmies(int noOfArmies){
     *this->noOfArmies = noOfArmies;
 };
-void Territory::setPlayerName(string playerName){
-    *this->playerName = playerName;
+void Territory::setPlayer(Player* playerName){
+    this->player = playerName;
 }
 void Territory::setAdjacentTerritories(Territory* aT){
     this->adjacentTerritories.push_back(aT);
@@ -145,12 +144,9 @@ Territory::Territory(Territory &territory){
 // --------------------- OVERLOADING ASSIGNMENT OPERATOR -----------------
 //Confused about pointers so if we have references instead of values i know where to look
 Territory &Territory::operator=(const Territory &t){
-    if (this != &t)
-    {
-        territoryName = t.territoryName;
-        noOfArmies = t.noOfArmies;
-        continent = t.continent;
-    }
+    territoryName = t.territoryName;
+    noOfArmies = t.noOfArmies;
+    continent = t.continent;
     return *this;
 }
 
@@ -174,13 +170,29 @@ Map::Map(){};
 Map::Map(vector<Continent*> subgraph){
     this->subgraph = subgraph;
 };
+Map::Map(Map& map){
+    this->subgraph = map.subgraph;
+    this->allTerritories = map.allTerritories;
+}
 
-
+// ----------------- OVERLOADING ASSIGNMENT OPERATORS --------------------
+Map &Map::operator=(const Map &map){
+    this->subgraph = map.subgraph;
+    this->allTerritories = map.allTerritories;
+    return *this;
+}
 
 // ------------------------- MAP LOADER CLASS ------------------------
 
 
+// ------------------ OVERLOADING ASSIGNMENT OPERATORS --------------
 
+MapLoader &MapLoader::operator=(const MapLoader &map){
+    this->realMap = map.realMap;
+}
+
+
+//Strip Line function which splits the string into a vector of strings
 vector<string> stripLine(string line) {
     vector<string> result;
     string word = "";
@@ -221,12 +233,15 @@ Territory* MapLoader::addTerritory(string tName, string cName){
             break;
         };
     }
+
+    //If territory is not found and is in the adjacent list do the following
     if(territoryFound== false && cName == "adjacent"){
         Territory* adjacent = new Territory(tnamePointer);
         //add to list of all territories
         realMap->setAllTerritories(adjacent);
         return adjacent;
     }
+    //If the territory is not found in the list of all Territories do the following
     if(territoryFound == false) {
         int pos = 0;
         for (int i = 0; i < continents.size(); i++) {
@@ -235,7 +250,7 @@ Territory* MapLoader::addTerritory(string tName, string cName){
                 break;
             }
         }
-        //continent = continents[pos];
+        //Creating a territory
         Territory* territory = new Territory(tnamePointer, continents[pos]);
 
         //Adding the territory to the all territories vector
@@ -255,33 +270,35 @@ Territory* MapLoader::addTerritory(string tName, string cName){
             f[found]->setContinent(continents[pos]);
             continents[pos]->setListofTerritories(f[found]);
         }
-        return f[found];
+        //we purposefully add any repeat territories here
+        Territory *territory = new Territory(tnamePointer, continents[pos]);
+        continents[pos]->setListofTerritories(territory);
+        realMap->setAllTerritories(territory);
+        return territory;
     }
 
 }
-/*This method is gonna create a map after reading the .map files provided by the user
+
+
+/*This method is going to create a map after reading the .map files provided by the user
 using io streams and return a pointer to the map object*/
+
 Map* MapLoader::loadMap(){
     cout<<"Enter the name of the .map file you would like to open: "<<endl;
     string fileName;
     cin>> fileName;
     realMap = new Map();
     string extension = fileName.substr((fileName.length())-4,fileName.length());
-//    if(extension!=".map"){
-//        cout<<"The file you entered is not of the .map format, you may try again!";
-//        // by returning a null map pointer, we can reject all non .map files
-//        return realMap;
-//        //loop in driver to ensure we re-prompt user for the file name
-//    }
+    if(extension!=".map"){
+        cout<<"The file you entered is not of the .map format, you may try again!"<<endl;
+        // by returning a null map pointer, we can reject all non .map files
+        return realMap;
+        //loop in driver to ensure we re-prompt user for the file name
+    }
     // Open the file
     ifstream file;
     file.open(fileName);
-    //ifstream file("./Risk-Project/Asia.map");
-    //file.open;dd
 
-    if(file.fail()){
-        cout<<"file "<<fileName<<" is open";
-    }
     string lineText;
     bool atContinents = false;
     bool atTerritories = false;
@@ -293,20 +310,31 @@ Map* MapLoader::loadMap(){
         };
 
     };
-// ----------------- -
+
+    //If end of file and reached and we didn't find the [Continents] keyword
     if(file.eof() && !atContinents){
         cout << "End of File reached. No continents found, invalid map!" <<endl;
+        //Returning an empty map
         return realMap;
     };
 
+    //If we find the continents keyword
     if(atContinents){
+
+        //Going to the next line
         getline(file,lineText);
+
+        //Loop until the line is empty
         while (!lineText.empty()){
+
+            //Splitting the string using = and creating a new continent and adding it to the continent's list inside the map
             string delimiter = "=";
             string *continentName = new string (lineText.substr(0, lineText.find(delimiter)));
             int *bonusValue = new  int (stoi(lineText.substr(lineText.find(delimiter)+1, lineText.length())));
             Continent* continent = new Continent(continentName,bonusValue);
             realMap->setSubgraph(continent);
+
+            //Deallocating the memory since we created things inside the heap to prevent memory leaks
             continentName = nullptr;
             delete continentName;
             bonusValue = nullptr;
@@ -318,37 +346,59 @@ Map* MapLoader::loadMap(){
     }
 
    // ------------------------- STARTING TO READ THE TERRITORIES ------------------------
+
+   // If the end of file is not reached and territory keyword is not found
     while(!file.eof() && !atTerritories){
         getline(file,lineText);
+
+        //Territories keyword is found
         if(lineText == "[Territories]"){
             atTerritories = true;
         };
     };
 
+
+
+    // Rejecting the file if the territories keyword is not found after reading the whole map file
     if(file.eof() && !atTerritories){
-        cout << "End of File reached. No Territories found, invalid map!";
+        cout << "End of File reached. No Territories found, invalid map!"<<endl;
+
+        //Returning an empty map
         return realMap;
     };
 
+
+    //When the territories found is true
     if(atTerritories){
+
+        //Loop until the end of file
         while (!file.eof()) {
             getline(file, lineText);
             if (lineText != " ") {
                 vector<string> currentLine = stripLine(lineText);
                 string countryName = currentLine[0];
                 string continentName = currentLine[3];
+
+                //Creating the first territory
                 Territory *t = (addTerritory(countryName, continentName));
+
+                //Looping over the rest of the vector of strings as we know the rest of territories are adjacent we create them
                 for (int i = 4; i < currentLine.size(); i++) {
                     Territory *a = addTerritory(currentLine[i], "adjacent");
                     t->setAdjacentTerritories(a);
+
+                    //Deallocating memory to avoid memory leaks
                     a = nullptr;
                     delete a;
                 }
+                //Deallocating memory to avoid memory leaks
                 t = nullptr;
                 delete t;
             }
         }
     }
+
+    //Returning the map filled with all the territories created along with the continent vectors
     return realMap;
 };
 
