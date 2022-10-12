@@ -10,6 +10,7 @@ using namespace std;
 class Deck;
 class Hand;
 class Card;
+class Territory;
 
 ///////////////////////////////// PLAYER /////////////////////////////////////
 

@@ -1,6 +1,3 @@
-//
-// Created by Emma on 2022-10-07.
-//
 #include "GameEngineDriver.h"
 #include <iostream>
 using namespace std;

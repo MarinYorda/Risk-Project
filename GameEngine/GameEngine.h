@@ -6,19 +6,24 @@
 #include <unordered_map>
 using namespace std;
 
-
 class GameEngine {
 private:
     unordered_map<int,vector<int*>> allowedStates;
     unordered_map<int,string*> intToStringState;
     static int* state;
 
-    public:
-        GameEngine();
-        // COPY CONSTRUCTOR
-        GameEngine(const GameEngine& ge);
-        GameEngine& operator=(const GameEngine& ge);
-        friend ostream& operator <<(ostream& os, GameEngine& ge);
+public:
+    // CONSTRUCTOR
+    GameEngine();
+
+    // COPY CONSTRUCTOR
+    GameEngine(const GameEngine& ge);
+
+    // ASSIGNMENT OPERATOR
+    GameEngine& operator=(const GameEngine& ge);
+
+    // STREAM INSERTION OPERATOR
+    friend ostream& operator <<(ostream& os, GameEngine& ge);
 
     // GETTERS
     int* getState();

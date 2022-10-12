@@ -1,11 +1,13 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "Player.h"
 using namespace std;
 
 class Territory;
 class Map;
 class MapLoader;
+class Player;
 class Continent{
 private:
     string* continentName;
@@ -43,7 +45,7 @@ private:
     Continent* continent;
     int* noOfArmies;
     // this will eventually be a player object
-    string* playerName;
+    Player* player;
 
     // getter and setter methods for Territory class.
 public:
@@ -54,6 +56,8 @@ public:
     void setTerritoryName(string territoryName);
     void setAdjacentTerritories(Territory* aT);
     vector<Territory*> getAdjacentTerritories();
+    void setPlayer(Player* p);
+    Player* getPlayer();
 
     //Im confused to why we are passing the reference to the continent here???
     //Previously it (Continent &continent) i changed it to a pointer because in the add territory

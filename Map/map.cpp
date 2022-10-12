@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "map.h"
-#include <stack>
 #include <fstream>
 #include <string>
 using namespace std;
@@ -135,7 +134,7 @@ Territory::Territory(Territory &territory){
     this->territoryName = territory.territoryName;
     this->noOfArmies= territory.noOfArmies;
     this->continent = territory.continent;
-    this->playerName = territory.playerName;
+    this->player = territory.player;
 };
 
 
@@ -210,15 +209,6 @@ vector<string> stripLine(string line) {
     }
     return result;
 }
-
-
-/*I tried to change this method a bit cuz it showed a bunch of errors on Clion. I hope it works cuz i wasted a lot of time
- * This method is gonna create a territory and ad
-I'm unda the wata pls help me*/
-
-
-//Add an if statement for when the territory found is true, to add a continent to the territory which was already created
-
 Territory* MapLoader::addTerritory(string tName, string cName){
     vector<Continent*> continents = realMap->getSubgraph();
     vector<Territory*> f = realMap->getAllTerritories();
@@ -257,17 +247,26 @@ Territory* MapLoader::addTerritory(string tName, string cName){
         continents[pos]->setListofTerritories(territory);
         return territory;
     }
-    if(territoryFound == true){
-        if(f[found]->getContinent()== NULL){
-            int pos = 0;
-            for (int i = 0; i < continents.size(); i++) {
-                if (continents[i]->getContinentName() == cName) {
-                    pos = i;
-                    break;
-                }
+
+    //If territory is found in the list of territories and is adjacent
+    if(territoryFound == true && cName=="adjacent"){
+        return f[found];
+    }
+
+    //If the territory is found in the list of territories
+    if(territoryFound == true) {
+        int pos = 0;
+        for (int i = 0; i < continents.size(); i++) {
+            if (continents[i]->getContinentName() == cName) {
+                pos = i;
+                break;
             }
+        }
+        if (f[found]->getContinent() == NULL) {
+
             f[found]->setContinent(continents[pos]);
             continents[pos]->setListofTerritories(f[found]);
+            return f[found];
         }
         //we purposefully add any repeat territories here
         Territory *territory = new Territory(tnamePointer, continents[pos]);
@@ -284,7 +283,8 @@ using io streams and return a pointer to the map object*/
 Map* MapLoader::loadMap(){
     cout<<"Enter the name of the .map file you would like to open: "<<endl;
     string fileName;
-    cin>> fileName;
+    cin>>fileName;
+    cout<<"You have chosen file name: "<<fileName<<endl;
     realMap = new Map();
     string extension = fileName.substr((fileName.length())-4,fileName.length());
     if(extension!=".map"){
@@ -372,7 +372,9 @@ Map* MapLoader::loadMap(){
         //Loop until the end of file
         while (!file.eof()) {
             getline(file, lineText);
-            if (lineText != " ") {
+            if (!lineText.empty()) {
+
+                //Splitting the string into a vector of strings
                 vector<string> currentLine = stripLine(lineText);
                 string countryName = currentLine[0];
                 string continentName = currentLine[3];
