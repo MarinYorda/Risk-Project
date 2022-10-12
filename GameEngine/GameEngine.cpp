@@ -59,7 +59,6 @@ GameEngine& GameEngine::operator=(const GameEngine& ge)
     this->allowedStates = ge.allowedStates;
     this->intToStringState = ge.intToStringState;
     return *this;
-    // TODO: make sure it's right shallow/deep copy
 }
 
 // STREAM INSERTION OPERATOR
@@ -70,13 +69,33 @@ ostream& operator <<(ostream& os, GameEngine& ge)
     return os;
 }
 
+// GETTERS
+int* GameEngine::getState() {
+    return state;
+}
+
+string *GameEngine::getStateAsString() {
+    return intToStringState[*state];
+}
+
+unordered_map<int, string *> GameEngine::getIntToStringState() {
+    return intToStringState;
+}
+
+// OTHER
+
 void GameEngine::gameFlow(string userInput) {
+    // this method handles state transitions
+
+    // convert user input from string to int
     int moveInt = userInputToInt(userInput);
 
+    // if user move is valid, transition state by incrementing the state variable by the appropriate amount
     if (validateMove(moveInt)) {
         int advance = moveInt - *state;
         int nextState = *state + advance;
 
+        // edge cases: these special values handles the loop transitions
         if (nextState == 10000) {
             *state = 6;
         } else if (nextState == 1000) {
@@ -88,11 +107,13 @@ void GameEngine::gameFlow(string userInput) {
         }
 
     } else {
+        // invalid move
         cout << "Invalid move! Try again" << endl << endl;
     }
 }
 
 bool GameEngine::validateMove(int move) {
+    // check that the user's move is part of the allowed moves at a specific state
     for (int* validMove: allowedStates[*state]) {
         if (move == *validMove) {
             return true;
@@ -102,43 +123,9 @@ bool GameEngine::validateMove(int move) {
     return false;
 }
 
-string *GameEngine::getStateAsString() {
-    return intToStringState[*state];
-}
-
-int* GameEngine::getState() {
-    return state;
-}
-
-unordered_map<int, string *> GameEngine::getIntToStringState() {
-    return intToStringState;
-}
-
-//{
-//{0 : loadmap}
-//{1 : loadmap, validatemap}
-//{2 : addplayer}
-//{3 : addplayer, assigncountries}
-//{4 : issueorder}
-//{5 : issueorder, endissueorders}
-//{6 : execorders, endexecorders, win}
-//{7 : play, end}
-//}
-
-//{
-//{0 : 1}
-//{1 : 1, 2}
-//{2 : 3}
-//{3 : 3, 4}
-//{4 : 5}
-//{5 : 5, 10000} // if state == 10000, state = 6 to avoid endless loop
-//{6 : 6, 1000, 7} // if state == 1000, state = 4
-//{7 : 100, 8} // if state == 100, state = 0
-//}
-// if state == 8, exit game
-
 
 int GameEngine::userInputToInt(string userInput) {
+    // convert the user input from string to int
     if (userInput == "loadmap") {
         return 1;
     } else if (userInput == "validatemap") {
@@ -166,6 +153,7 @@ int GameEngine::userInputToInt(string userInput) {
     }
 }
 
+// DESTRUCTOR
 GameEngine::~GameEngine() {
     for (auto entry: allowedStates) {
         for (int* n : entry.second) {

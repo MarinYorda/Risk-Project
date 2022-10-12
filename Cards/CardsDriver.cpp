@@ -52,13 +52,13 @@ void testCards() {
     cout << "" << endl;
 
     // Deck will call the draw() method three times per player's hand
-    testDeck->draw(p1->getHand());
-    testDeck->draw(p1->getHand());
-    testDeck->draw(p1->getHand());
+    hand1->addToHand(testDeck->draw());
+    hand1->addToHand(testDeck->draw());
+    hand1->addToHand(testDeck->draw());
 
-    testDeck->draw(p2->getHand());
-    testDeck->draw(p2->getHand());
-    testDeck->draw(p2->getHand());
+    hand2->addToHand(testDeck->draw());
+    hand2->addToHand(testDeck->draw());
+    hand2->addToHand(testDeck->draw());
 
     cout << "--- Outputting Current Deck Info ---" << endl;
     cout << "" << endl;
@@ -102,7 +102,3 @@ void testCards() {
     cout << *hand2 << endl;
 
 }
-
-//int main() {
-//    testCards();
-//}

@@ -49,19 +49,13 @@ Deck::Deck(const Deck& copyDeck) {
     cout << "Copy constructor of Deck called" << endl;
     cards = copyDeck.cards;
 
-    // TODO: make sure it's right shallow/deep copy
 }
 
 // ASSIGNMENT OPERATOR
 Deck& Deck::operator=(const Deck& assignDeck)
 {
     cout << "Copy assignment operator of Deck" << endl;
-    for (auto card : assignDeck.cards)
-    {
-        this->cards.push_back(new Card(*card));
-    }
-    return *this;
-    // TODO: make sure it's right shallow/deep copy
+    cards = assignDeck.cards;
 }
 
 // STREAM INSERTION OPERATOR
@@ -84,29 +78,27 @@ vector<Card*> Deck::getCards() {
 
 int Deck::size() {
     // Return current size of deck
-    return (int) cards.size();
+    return cards.size();
 }
 
 // SETTERS
 void Deck::setCards(vector<Card*> newCards) {
-    cards = std::move(newCards);
+    cards = newCards;
 }
 
 // OTHER
-void Deck::draw(Hand* h) {
+Card* Deck::draw() {
 
     //Retrieve random card from the deck and delete
-    int cardsInDeck = (int) cards.size();
+    int cardsInDeck = cards.size();
 
     srand(time(nullptr)); // a new set of random numbers is generated
     int randomIndex = rand() % (cardsInDeck-1);
 
     Card* randomCard = cards.at(randomIndex);
     cards.erase(cards.begin()+randomIndex); //delete card from deck
-    
 
-    //Add Card to player's Hand
-    h->addToHand(randomCard);
+    return randomCard;
 
 }
 
@@ -138,7 +130,6 @@ Hand::Hand() {
 Hand::Hand(const Hand& copyHand) {
     cout << "Copy constructor of Hand called" << endl;
     this->cards = copyHand.cards;
-    // TODO: make sure it's right shallow/deep copy
 }
 
 // ASSIGNMENT OPERATOR
@@ -150,13 +141,12 @@ Hand& Hand::operator=(const Hand& assignHand)
         this->cards.push_back(new Card(*card));
     }
     return *this;
-    // TODO: make sure it's right shallow/deep copy
 }
 
 // STREAM INSERTION OPERATOR
 ostream& operator <<(ostream& os, const Hand& hand)
 {
-    cout << "This player's hand has " << hand.cards.size() << " cards." << endl;
+    cout << "This player has " << hand.cards.size() << " cards in hand" << endl;
 
     //iterate through deck and print every card type
     for(Card* card : hand.cards) {
@@ -215,6 +205,7 @@ Hand::~Hand() {
     //delete every card pointer in hand
     for (Card* card : cards) {
         delete card;
+        card = nullptr;
     }
 
 }
@@ -228,23 +219,23 @@ Card::Card(int cardType) {
     switch (cardType) {
 
         case 0: {
-            cardName = new string("bomb");
+            cardName = new string("BOMB");
             break;
         }
         case 1: {
-            cardName = new string("reinforcement");
+            cardName = new string("REINFORCEMENT");
             break;
         }
         case 2: {
-            cardName = new string("blockade");
+            cardName = new string("BLOCKADE");
             break;
         }
         case 3: {
-            cardName = new string("airlift");
+            cardName = new string("AIRLIFT");
             break;
         }
         case 4: {
-            cardName = new string("diplomacy");
+            cardName = new string("DIPLOMACY");
             break;
         }
         default: {
@@ -257,17 +248,15 @@ Card::Card(int cardType) {
 // COPY CONSTRUCTOR
 Card::Card(const Card& copyCard) {
     cout << "Copy constructor of Card called" << endl;
-    this->cardName = copyCard.cardName;
-    // TODO: make sure it's right shallow/deep copy
+    this->cardName = new string(*(copyCard.cardName));
 }
 
 // ASSIGNMENT OPERATOR
 Card& Card::operator=(const Card& assignCard)
 {
     cout << "Copy assignment operator of Card" << endl;
-    this->cardName = assignCard.cardName;
+    this->cardName = new string(*(assignCard.cardName));
     return *this;
-    // TODO: make sure it's right shallow/deep copy
 }
 
 // STREAM INSERTION OPERATOR
@@ -283,17 +272,12 @@ string* Card::getCardName() {
 }
 
 //SETTERS
-void Card::setCardName(string newCard) {
-    *cardName = std::move(newCard);
+void Card::setCardName(string* newCard) {
+    cardName = newCard;
 }
 
 // OTHER
 void Card::play(Player* p1, Deck* deck) {
-    //creates an order
-    string* order = cardName;
-
-    //add to player's list of orders
-    p1->issueOrder(order);
 
     //remove card from player's hand
     p1->getHand()->deleteFromHand(this);

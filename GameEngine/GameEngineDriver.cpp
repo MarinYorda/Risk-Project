@@ -22,7 +22,3 @@ void testGameStates() {
     cout << "End of game" << endl;
 
 }
-
-//int main() {
-//    testGameStates();
-//}
