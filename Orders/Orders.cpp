@@ -104,7 +104,9 @@ Deploy::Deploy() : Order(new string("DEPLOY")) {
 //    call parent constructor using order type "Deploy"
 };
 
-Deploy::~Deploy() {};
+Deploy::~Deploy() {
+
+};
 
 bool* Deploy::validate() {
 //    validation returns true in the meantime

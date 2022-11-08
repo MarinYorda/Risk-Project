@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include "Player.h"
+#include "map.h"
 using namespace std;
 
 class GameEngine {
@@ -36,4 +38,12 @@ public:
 
     // DESTRUCTOR
     ~GameEngine();
+
+
+    //Part 3 Abdur & Nauar
+    void mainGameLoop();
+    void reinforcementPhase(vector<Player*> listOfPlayers,Map* map);
+    void issueOrdersPhase(vector<Player*> listOfPlayers,Map* map);
+    void executeOrdersPhase();
+    int continentBonus(Player* player, Map* map);
 };

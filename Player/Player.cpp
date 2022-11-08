@@ -128,34 +128,48 @@ void Player::setTerritories(vector<Territory*> newTerritories) {
 
 vector<Territory*> Player::toAttack() {
     vector<Territory*> attTerritories;
-    attTerritories.push_back(new Territory(new string("India"),new Continent(new string("Africa"), new int(5))));
-    attTerritories.push_back(new Territory(new string("Chile"),new Continent(new string("South America"), new int(5))));
-    attTerritories.push_back(new Territory(new string("France"),new Continent(new string("Europe"), new int(5))));
-    attTerritories.push_back(new Territory(new string("Poland"),new Continent(new string("Europe"), new int(5))));
+    for (int i = 0; i < this->territories.size(); ++i) {
+        for (int j = 0; j < this->territories[i]->getAdjacentTerritories().size(); ++j) {
+            attTerritories.push_back(this->territories[i]->getAdjacentTerritories()[j]);
+        }
+    }
     return attTerritories;
 }
 
 vector<Territory*> Player::toDefend() {
     vector<Territory*> defTerritories;
-    defTerritories.push_back(territories[0]);
-    defTerritories.push_back(territories[1]);
+    //Part 3 Abdur & Nauar
+    for(int i = 0; i<this->territories.size();i++){
+        defTerritories.push_back(this->territories[i]);
+    }
     return defTerritories;
 }
 
-void Player::issueOrder() {
-    // for now the order will be picked from the front of the card list
-    Card* firstCard = this->hand->getCards()[0];
-
-    //play the card
-    firstCard->play(this, this->deck);
-
-    //create order
-    Order* newOrder = Order::createSubtype(*(firstCard->getCardName()));
-
-    //add to order list
-    orders->add(newOrder);
-
-    cout << "The order " << *(firstCard->getCardName()) << " was created " << endl;
+void Player::issueOrder(int orderNumber) {
+    if(this->getReinforcements()!=0 && orderNumber!=0){
+            cout << "You still have " << this->getReinforcements() << " troops in the reinforcement pool\n";
+            cout << "You must exhaust all of them before any other order is done!";
+            return;
+    }
+    switch(orderNumber) {
+        case '0':
+            //deploy order
+            cout << "You have: " << this->getReinforcements() <<" troops, please choose one of your territories to place them on!";
+            vector<Territory*> territories = this->toDefend();
+            for (int i = 0; i < territories.size(); ++i) {
+                cout <<  i+1 << territories[i] << "\n";
+            }
+            int armiesToPlace = *this->getReinforcements()/2+1;
+            break;
+        case '1':
+            //advance order
+            //get a list of the users territories
+            vector<Territory*> t = this->toDefend();
+            //pick one of the territories you own to be the source territory
+            //get a list of neighbouring territories to that source territory
+            //pick one of the territories from the neighbouring territories
+            //compare the selected target territory with the toAttack list and the toDefend list and determine if it's owned by player or not
+    }
 }
 
 
