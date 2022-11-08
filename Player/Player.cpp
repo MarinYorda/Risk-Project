@@ -97,6 +97,9 @@ OrdersLists* Player::getOrders() {
 vector<Territory*> Player::getTerritories() {
     return territories;
 }
+int* Player::getReinforcements(){
+    return reinforcements;
+}
 
 // SETTERS
 
@@ -123,10 +126,15 @@ void Player::setOrders(OrdersLists* newOrders) {
 void Player::setTerritories(vector<Territory*> newTerritories) {
     territories = newTerritories;
 }
+void Player::setReinforcements(int *noOfReinforcements) {
+    reinforcements = noOfReinforcements;
+}
+
 
 // OTHER
 
 vector<Territory*> Player::toAttack() {
+    //Part 3 Abdur & Nauar
     vector<Territory*> attTerritories;
     for (int i = 0; i < this->territories.size(); ++i) {
         for (int j = 0; j < this->territories[i]->getAdjacentTerritories().size(); ++j) {
