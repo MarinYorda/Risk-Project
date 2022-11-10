@@ -24,6 +24,9 @@ private:
     OrdersLists* orders;
     vector<Territory*> territories;
 
+    //Part 3 Abdur & Nauar
+    int* reinforcements;
+
 public:
     // CONSTRUCTOR
     Player(string* pName);
@@ -44,6 +47,9 @@ public:
     OrdersLists* getOrders();
     vector<Territory*> getTerritories();
 
+    //Part 3 Abdur & Nauar
+    int* getReinforcements();
+
     // SETTERS
     // void setPlayerCount(int playerCount);
     void setId(int newId);
@@ -53,10 +59,13 @@ public:
     void setOrders(OrdersLists* newOrders);
     void setTerritories(vector<Territory*> newTerritories);
 
+    //Part 3 Abdur & Nauar
+    void setReinforcements(int* noOfReinforcements);
+
     // OTHER
     vector<Territory*> toAttack();
     vector<Territory*> toDefend();
-    void issueOrder();
+    void issueOrder(int orderNumber);
 
     // DESTRUCTOR
     ~Player();
