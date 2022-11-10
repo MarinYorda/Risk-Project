@@ -11,11 +11,14 @@
 using namespace std;
 
 class Command;
+class FileLineReader;
 class CommandProcessor
+
 {
 private:
         string readCommand();
         vector <Command*> commandsList;
+
 
 public:
         Command* getCommand();
@@ -29,9 +32,10 @@ class Command
 private:
     string* command;
     string* effect;
+    vector <Command*> effectsList;
 
 public:
-    void saveEffect();
+    Command* saveEffect(string *effect);
 
     //Constructor for command object
     Command();
@@ -49,7 +53,8 @@ public:
 class FileLineReader
 {
 public:
-    void readLineFromFile ();
+    string readLineFromFile ();
+    FileLineReader();
 
 };
 
