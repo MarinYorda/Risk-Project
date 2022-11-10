@@ -25,6 +25,7 @@ ostream &operator<<(ostream &output, Map &obj)
 ostream &operator<<(ostream &output, MapLoader &obj)
 {
     output << "Map is being Loaded!" <<endl;
+    return output;
 }
 
 
@@ -114,6 +115,7 @@ void Territory::setAdjacentTerritories(Territory* aT){
 
 
 
+
 // --------------------- CONSTRUCTORS -------------------------
 
 // Default Constructor
@@ -188,6 +190,7 @@ Map &Map::operator=(const Map &map){
 
 MapLoader &MapLoader::operator=(const MapLoader &map){
     this->realMap = map.realMap;
+    return *this;
 }
 
 

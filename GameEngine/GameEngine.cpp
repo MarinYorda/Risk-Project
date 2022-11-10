@@ -196,7 +196,7 @@ int continentBonus(Player* player, Map* map){
 }
 
 //This method assigns reinforcements to each player depending on the number of territories owned along with the bonus value if any
-void reinforcementPhase(vector<Player*> listOfPlayers,Map* map){
+void GameEngine::reinforcementPhase(vector<Player*> listOfPlayers,Map* map){
     for (int i = 0; i < listOfPlayers.size(); ++i) {
         int reinforcements = 3;
         if(listOfPlayers[i]->getTerritories().size()==0){
@@ -208,13 +208,13 @@ void reinforcementPhase(vector<Player*> listOfPlayers,Map* map){
             if (reinforcements < territoryValue + bonusValue) {
                 reinforcements = territoryValue + bonusValue;
             }
-            int *reinforcementPointer = &reinforcements; //might mess up
-            listOfPlayers[i]->setReinforcements(reinforcementPointer);
+//            int *reinforcementPointer = &reinforcements; //might mess up
+            listOfPlayers[i]->setReinforcements(reinforcements);
         }
     }
 }
 
-void issueOrdersPhase(vector<Player*> listOfPlayers,Map* map) {
+void GameEngine::issueOrdersPhase(vector<Player*> listOfPlayers,Map* map) {
     for (int i = 0; i < listOfPlayers.size(); ++i) {
         string order[] = {"deploy", "advance", "bomb"};
         int orderNum[] = {0,1,0,3};

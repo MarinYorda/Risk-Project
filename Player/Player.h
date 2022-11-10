@@ -60,7 +60,7 @@ public:
     void setTerritories(vector<Territory*> newTerritories);
 
     //Part 3 Abdur & Nauar
-    void setReinforcements(int* noOfReinforcements);
+    void setReinforcements(int noOfReinforcements);
 
     // OTHER
     vector<Territory*> toAttack();

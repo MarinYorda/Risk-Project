@@ -77,10 +77,10 @@ void testPlayers() {
     cout << "" << endl;
 
     // Player issuing orders
-    p1->issueOrder();
-    p1->issueOrder();
-    p1->issueOrder();
-    p1->issueOrder();
+    p1->issueOrder(1);
+    p1->issueOrder(2);
+    p1->issueOrder(3);
+    p1->issueOrder(4);
 
     // Output player info
     cout << "" << endl;

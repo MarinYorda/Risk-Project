@@ -160,23 +160,26 @@ void Player::issueOrder(int orderNumber) {
             return;
     }
     switch(orderNumber) {
-        case '0':
+        case '0': {
             //deploy order
-            cout << "You have: " << this->getReinforcements() <<" troops, please choose one of your territories to place them on!";
-            vector<Territory*> territories = this->toDefend();
+            cout << "You have: " << this->getReinforcements()
+                 << " troops, please choose one of your territories to place them on!";
+            vector<Territory *> territories = this->toDefend();
             for (int i = 0; i < territories.size(); ++i) {
-                cout <<  i+1 << territories[i] << "\n";
+                cout << i + 1 << territories[i] << "\n";
             }
-            int armiesToPlace = *this->getReinforcements()/2+1;
+            int armiesToPlace = *this->getReinforcements() / 2 + 1;
             break;
-        case '1':
+        }
+        case '1': {
             //advance order
             //get a list of the users territories
-            vector<Territory*> t = this->toDefend();
+            vector<Territory *> t = this->toDefend();
             //pick one of the territories you own to be the source territory
             //get a list of neighbouring territories to that source territory
             //pick one of the territories from the neighbouring territories
             //compare the selected target territory with the toAttack list and the toDefend list and determine if it's owned by player or not
+        }
     }
 }
 
