@@ -126,8 +126,8 @@ void Player::setOrders(OrdersLists* newOrders) {
 void Player::setTerritories(vector<Territory*> newTerritories) {
     territories = newTerritories;
 }
-void Player::setReinforcements(int *noOfReinforcements) {
-    reinforcements = noOfReinforcements;
+void Player::setReinforcements(int noOfReinforcements) {
+    reinforcements = new int(noOfReinforcements);
 }
 
 

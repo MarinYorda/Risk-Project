@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 #include <vector>
+#include <string.h>
 //
 // Created by Emma on 2022-10-06.
 //
@@ -167,7 +168,7 @@ GameEngine::~GameEngine() {
         entry.second = nullptr;
     }
 }
-
+//Dn
 void mainGameLoop(){
     //first phase of game loop is to calculate number of reinforcement armies
     //reinforcementPhase();
@@ -178,21 +179,22 @@ void mainGameLoop(){
 
 //This method will loop over all the continents and check if a player owns all the territories in the particular continent
 // and return the total bonus value added to players' reinforceement pool
-int continentBonus(Player* player, Map* map){
-    int totalBonus=0;
+int GameEngine::continentBonus(Player* player, Map* map) {
+    int totalBonus = 0;
     for (int i = 0; i < map->getSubgraph().size(); ++i) {
-        bool getsTheBonus= true;
+        bool getsTheBonus = true;
         for (int j = 0; j < map->getSubgraph()[i]->getListofTerritories().size(); ++j) {
-            if(map->getSubgraph()[i]->getListofTerritories()[j]->getPlayerName() != *player->getName()){
-                getsTheBonus= false;
+            if (map->getSubgraph()[i]->getListofTerritories()[j]->getPlayerName() != *player->getName()) {
+                getsTheBonus = false;
                 break;
+
+            }
+            if (getsTheBonus) {
+                totalBonus += map->getSubgraph()[i]->getBonusValue();
             }
         }
-        if(getsTheBonus){
-            totalBonus+=map->getSubgraph()[i]->getBonusValue();
-        }
+        return totalBonus;
     }
-    return totalBonus;
 }
 
 //This method assigns reinforcements to each player depending on the number of territories owned along with the bonus value if any
