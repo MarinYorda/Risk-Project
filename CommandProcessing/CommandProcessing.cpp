@@ -94,8 +94,10 @@ void FileCommandProcessorAdapter :: passCommand(string command) {
 }
 
 string FileLineReader::readLineFromFile() {
-//    bool txtfile = true;
-//    while (txtfile) {
+    bool loopy = true;
+    string text;
+
+    while (loopy) {
     cout << "Enter the text file you wish to read commands from: " << endl;
     cin >> text;
 
