@@ -16,9 +16,7 @@ Command::Command(std::string *command, std::string *effect) {
     this->command = command;
     this->effect = effect;
 }
-Command::Command(std::string *effect) {
-    this->effect = effect;
-}
+
 
 //----------------Getters & Setters -------------
 
@@ -60,6 +58,7 @@ Command* CommandProcessor :: getCommand() {
         }
         else
         {
+            coms->saveEffect(new string ("invalid move"));
             continue;
         }
 
@@ -71,8 +70,7 @@ Command* CommandProcessor :: getCommand() {
 
 //when command is executed, effect stored as string in Command object
 Command* Command :: saveEffect (string *effect) {
-    Command *comEffect = new Command (effect);
-    effectsList.push_back(comEffect);
+    this->effect = effect;
 }
 
 bool CommandProcessor :: validate(string command) {
@@ -90,44 +88,46 @@ void FileCommandProcessorAdapter::readCommand() {
 
 }
 
+void FileCommandProcessorAdapter :: passCommand(string command) {
+    string effect = "";
+    Command* coms = saveCommand(new string(command),new string (effect));
+}
+
 string FileLineReader::readLineFromFile() {
 //    bool txtfile = true;
 //    while (txtfile) {
     cout << "Enter the text file you wish to read commands from: " << endl;
-    string textfile;
-    cin >> textfile;
+    cin >> text;
 
-    cout << "We are now reading commands from " << textfile << endl;
+    cout << "We are now reading commands from " << text << endl;
 
     //making sure the user has entered a text file
-    string txt = textfile.substr (textfile.length()-4,textfile.length());
-    if (txt != ".map"){
+    string txt = text.substr (text.length()-4,text.length());
+    if (txt != ".txt"){
         cout << "You have not entered a text file, please try again. " << endl;
     }
     else
-       // txtfile = false;
-    //}
+        loopy = false;
+    }
 
     //opening the file
 
     ifstream fileReading;
-    fileReading.open (textfile);
+    fileReading.open (text);
     string lineCommand;
 
     while (!fileReading.eof()){
-        getLine(fileReading, lineCommand);
-            return lineCommand; //return line by line?
+        getline(fileReading, lineCommand);
+
 //        string effect = "";
 //        Command* coms = saveCommand(new string(lineCommand,new string (effect)); //no access to saveCommand & saveEffect
 
     }
 
 
-
-
-
-
 }
+
+
 
 
 

@@ -32,7 +32,6 @@ class Command
 private:
     string* command;
     string* effect;
-    vector <Command*> effectsList;
 
 public:
     Command* saveEffect(string *effect);
@@ -40,7 +39,7 @@ public:
     //Constructor for command object
     Command();
     Command(string *command, string *effect);
-    Command(string *effect);
+
 
 };
 
@@ -48,6 +47,9 @@ class FileCommandProcessorAdapter : public CommandProcessor
 {
 public:
     void readCommand ();
+    void passCommand (string command);
+
+
 };
 
 class FileLineReader
