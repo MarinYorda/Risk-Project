@@ -43,7 +43,7 @@ public:
     //Part 3 Abdur & Nauar
     void mainGameLoop();
     void reinforcementPhase(vector<Player*> listOfPlayers,Map* map);
-    void issueOrdersPhase(vector<Player*> listOfPlayers,Map* map);
+    OrdersLists* issueOrdersPhase(vector<Player*> listOfPlayers,Map* map);
     void executeOrdersPhase();
     int continentBonus(Player* player, Map* map);
 };

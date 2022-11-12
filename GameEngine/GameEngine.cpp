@@ -184,17 +184,17 @@ int GameEngine::continentBonus(Player* player, Map* map) {
     for (int i = 0; i < map->getSubgraph().size(); ++i) {
         bool getsTheBonus = true;
         for (int j = 0; j < map->getSubgraph()[i]->getListofTerritories().size(); ++j) {
-            if (map->getSubgraph()[i]->getListofTerritories()[j]->getPlayerName() != *player->getName()) {
+            if (map->getSubgraph()[i]->getListofTerritories()[j]->getPlayerName() != player->getName()) {
                 getsTheBonus = false;
                 break;
 
             }
-            if (getsTheBonus) {
-                totalBonus += map->getSubgraph()[i]->getBonusValue();
-            }
         }
-        return totalBonus;
+        if (getsTheBonus) {
+            totalBonus += map->getSubgraph()[i]->getBonusValue();
+        }
     }
+    return totalBonus;
 }
 
 //This method assigns reinforcements to each player depending on the number of territories owned along with the bonus value if any
@@ -216,16 +216,17 @@ void GameEngine::reinforcementPhase(vector<Player*> listOfPlayers,Map* map){
     }
 }
 
-void GameEngine::issueOrdersPhase(vector<Player*> listOfPlayers,Map* map) {
-    for (int i = 0; i < listOfPlayers.size(); ++i) {
-        string order[] = {"deploy", "advance", "bomb"};
-        int orderNum[] = {0,1,0,3};
-        for (int j = 0; j <order->size(); ++j) {
-            cout << "Please enter your order:";
-            cout << order[j];
-            listOfPlayers[i]->issueOrder(orderNum[j]);
-        }
-    }
+OrdersLists* GameEngine::issueOrdersPhase(vector<Player*> listOfPlayers,Map* map) {
+    OrdersLists* list = new OrdersLists();
+    //print out all the options
+    //attempt to call something other than deploy, fail
+    list->add(listOfPlayers[0]->issueOrder(1, map));
+    //call deploy until reinforcements are exhausted
+    list->add(listOfPlayers[0]->issueOrder(0, map));
+    list->add(listOfPlayers[0]->issueOrder(1, map));
+    list->add(listOfPlayers[0]->issueOrder(2, map));
+    list->add(listOfPlayers[0]->issueOrder(3, map));
+    return list;
 }
 
 

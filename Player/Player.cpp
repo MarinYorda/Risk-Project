@@ -133,22 +133,22 @@ void Player::setReinforcements(int noOfReinforcements) {
 
 // OTHER
 
-vector<Territory*> Player::toAttack() {
-    //Part 3 Abdur & Nauar
+vector<Territory*> Player::toAttack(Territory* source) {
     vector<Territory*> attTerritories;
-    for (int i = 0; i < this->territories.size(); ++i) {
-        for (int j = 0; j < this->territories[i]->getAdjacentTerritories().size(); ++j) {
-            attTerritories.push_back(this->territories[i]->getAdjacentTerritories()[j]);
+    for (int i = 0; i < source->getAdjacentTerritories().size(); ++i) {
+        if (source->getAdjacentTerritories()[i]->getPlayerName() != source->getPlayerName()) {
+            attTerritories.push_back(source->getAdjacentTerritories()[i]);
         }
     }
     return attTerritories;
 }
 
-vector<Territory*> Player::toDefend() {
+vector<Territory*> Player::toDefend(Territory* source) {
     vector<Territory*> defTerritories;
-    //Part 3 Abdur & Nauar
-    for(int i = 0; i<this->territories.size();i++){
-        defTerritories.push_back(this->territories[i]);
+    for (int i = 0; i < source->getAdjacentTerritories().size(); ++i) {
+        if (source->getAdjacentTerritories()[i]->getPlayerName() == source->getPlayerName()) {
+            defTerritories.push_back(source->getAdjacentTerritories()[i]);
+        }
     }
     return defTerritories;
 }
@@ -159,28 +159,86 @@ void Player::issueOrder(int orderNumber) {
             cout << "You must exhaust all of them before any other order is done!";
             return;
     }
+    vector<Territory*> ownTerritories;
+    for(int i = 0; i<this->territories.size();i++){
+        ownTerritories.push_back(this->territories[i]);
+    }
     switch(orderNumber) {
-        case '0': {
+        case 0: {
             //deploy order
-            cout << "You have: " << this->getReinforcements()
-                 << " troops, please choose one of your territories to place them on!";
-            vector<Territory *> territories = this->toDefend();
-            for (int i = 0; i < territories.size(); ++i) {
-                cout << i + 1 << territories[i] << "\n";
+            cout << "\n\n------------------ YOU CHOSE TO DEPLOY ARMIES -----------------" << endl;
+            cout << "\nYou have: " << *this->getReinforcements() << " troops, please choose one of your territories to place them on!" << endl;
+            for (int i = 0; i < ownTerritories.size(); ++i) {
+                cout << i + 1  << ". " << ownTerritories[i]->getTerritoryName()<< "\n";
             }
-            int armiesToPlace = *this->getReinforcements() / 2 + 1;
+            cout << "You have selected the territory: " << ownTerritories[0]->getTerritoryName()<< endl;
+            int armiesToPlace = *this->getReinforcements();
+            cout<< "Order has been created to send: " << armiesToPlace << " troops, to territory: " << ownTerritories[0]->getTerritoryName() << endl;
+            this->setReinforcements(0);
+            order = new Deploy();
             break;
         }
-        case '1': {
-            //advance order
-            //get a list of the users territories
-            vector<Territory *> t = this->toDefend();
-            //pick one of the territories you own to be the source territory
-            //get a list of neighbouring territories to that source territory
-            //pick one of the territories from the neighbouring territories
-            //compare the selected target territory with the toAttack list and the toDefend list and determine if it's owned by player or not
+        case 1: {
+            //advance order - to atk
+            cout << "\n\n---------------- YOU CHOSE TO ADVANCE TO A TERRITORY ---------------------" << endl;
+            cout << "\nSelect a source territory for your advance order: " << endl;
+            for (int i = 0; i < ownTerritories.size(); ++i) {
+                cout << i + 1 << ". " << ownTerritories[i]->getTerritoryName() << "\n";
+            }
+            cout << "\nYou chose: " << ownTerritories[0]->getTerritoryName() << endl;
+            cout << "Would you like to attack or defend?" << " ATTACK" << endl;
+            cout << "What territory would you like to attack?" << endl;
+            vector<Territory *> toAtk = toAttack(ownTerritories[0]);
+            for (int i = 0; i < toAtk.size(); ++i) {
+                cout << i + 1 <<". " << toAtk[i]->getTerritoryName() << "\n";
+            }
+            cout << "\nYou have chosen to attack territory: " << toAtk[0]->getTerritoryName() << endl;
+            cout << "Please enter the number of armies to be advanced: " << "8" << endl;
+            cout << "Order has been created to advance: 8 army units from " << ownTerritories[0]->getTerritoryName()
+                 << " to " << toAtk[0]->getTerritoryName() << endl;
+            order = new Advance();
+            break;
+        }
+        case 2: {
+            //advance order - toDefend
+            cout << "\n\n---------------- YOU CHOSE TO ADVANCE TO A TERRITORY ---------------------" << endl;
+            cout << "\nSelect a source territory for your advance order: " << endl;
+            for (int i = 0; i < ownTerritories.size(); ++i) {
+                cout << i + 1 <<". " << ownTerritories[i]->getTerritoryName() << "\n";
+            }
+            cout << "\nYou chose: " << ownTerritories[1]->getTerritoryName() << endl;
+            cout << "Would you like to attack or defend?" << " DEFEND" << endl;
+            cout << "What territory would you like to defend?\n";
+            vector<Territory *> toDef = toDefend(ownTerritories[1]);
+            for (int i = 0; i < toDef.size(); ++i) {
+                cout << i + 1 << ". " << toDef[i]->getTerritoryName() << "\n";
+            }
+            cout << "\nYou have chosen to defend territory: " << toDef[0]->getTerritoryName() << endl;
+            cout << "Please enter the number of armies to be advanced: " << "5" << endl;
+            cout << "Order has been created to advance: 5 army units from " << ownTerritories[1]->getTerritoryName()
+                 << " to " << toDef[0]->getTerritoryName() << endl;
+            order = new Advance();
+            break;
+        }
+        case 3:{
+            cout << "\n\n---------------- YOU CHOSE TO BOMB A TERRITORY ---------------------" << endl;
+            cout << "\nSelect a territory you would like to Bomb: " << endl;
+            vector<Territory*> enemyTerritories;
+            int counter = 0;
+            for (int i = 0; i < map->getAllTerritories().size(); ++i) {
+                if(map->getAllTerritories()[i]->getPlayerName()!=this->getName()){
+                    enemyTerritories.push_back(map->getAllTerritories()[i]);
+                    cout << counter + 1 << ". " << enemyTerritories[counter]->getTerritoryName() << "\n";
+                    counter++;
+                }
+            }
+            cout << "\nYou have chosen to Bomb: "<< enemyTerritories[0]->getTerritoryName() << endl;
+            cout << "Order has been created to Bomb: " << enemyTerritories[0]->getTerritoryName() << endl;
+            order = new Bomb();
+            break;
         }
     }
+    return order;
 }
 
 

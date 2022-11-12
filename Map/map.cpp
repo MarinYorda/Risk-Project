@@ -94,7 +94,7 @@ Player* Territory::getPlayer(){
     return this->player;
 }
 string Territory::getPlayerName() {
-    return *this->getPlayer()->getName();
+    return this->getPlayer()->getName();
 }
 vector <Territory*> Territory:: getAdjacentTerritories(){
     return this->adjacentTerritories;

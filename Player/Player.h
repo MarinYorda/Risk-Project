@@ -43,7 +43,7 @@ public:
 
     // GETTERS
     int* getId();
-    string* getName();
+    string getName();
     Hand* getHand();
     OrdersLists* getOrders();
     vector<Territory*> getTerritories();
@@ -64,9 +64,9 @@ public:
     void setReinforcements(int noOfReinforcements);
 
     // OTHER
-    vector<Territory*> toAttack();
-    vector<Territory*> toDefend();
-    void issueOrder(int orderNumber);
+    vector<Territory*> toAttack(Territory* source);
+    vector<Territory*> toDefend(Territory* source);
+    Order* issueOrder(int orderNumber,Map* map);
 
     // DESTRUCTOR
     ~Player();
