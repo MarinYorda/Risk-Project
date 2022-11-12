@@ -82,8 +82,8 @@ int* Player::getId() {
     return id;
 }
 
-string* Player::getName() {
-    return name;
+string Player::getName() {
+    return *this->name;
 }
 
 Hand* Player::getHand() {
@@ -153,11 +153,12 @@ vector<Territory*> Player::toDefend(Territory* source) {
     return defTerritories;
 }
 
-void Player::issueOrder(int orderNumber) {
-    if(this->getReinforcements()!=0 && orderNumber!=0){
-            cout << "You still have " << this->getReinforcements() << " troops in the reinforcement pool\n";
-            cout << "You must exhaust all of them before any other order is done!";
-            return;
+Order* Player::issueOrder(int orderNumber, Map* map) {
+    Order *order = nullptr;
+    if(orderNumber!=0 && *this->getReinforcements()!=0){
+            cout << "You still have " << *this->getReinforcements() << " troops in the reinforcement pool \n";
+            cout << "You must exhaust all of them before any other order is done!" << endl;
+            return order;
     }
     vector<Territory*> ownTerritories;
     for(int i = 0; i<this->territories.size();i++){

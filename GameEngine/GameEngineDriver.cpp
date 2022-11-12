@@ -22,8 +22,9 @@ void testGameStates() {
 
 }
 
-void testMainGameLoop() {
+void testMainGameLoop(){
     GameEngine *game = new GameEngine();
+    OrdersLists *list = new OrdersLists();
     //create players
     Player* ali = new Player(new string("Ali"));
     Player* adriana = new Player(new string("Adriana"));

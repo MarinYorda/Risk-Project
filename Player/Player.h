@@ -12,6 +12,7 @@ class Deck;
 class Hand;
 class Card;
 class Territory;
+class Map;
 
 ///////////////////////////////// PLAYER /////////////////////////////////////
 
