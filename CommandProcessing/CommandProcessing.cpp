@@ -10,8 +10,15 @@
 using namespace std;
 
 
-//-----------------CONSTRUCTORS------------------
+//---------------CONSTRUCTORS-------------------
 Command::Command() {};
+FileLineReader ::FileLineReader() {};
+
+FileCommandProcessorAdapter ::FileCommandProcessorAdapter() {
+    this->flr = new FileLineReader();
+    this->flr->readLineFromFile();
+};
+
 Command::Command(std::string *command, std::string *effect) {
     this->command = command;
     this->effect = effect;
@@ -21,9 +28,36 @@ Command::Command(std::string *command, std::string *effect) {
 //----------------Getters & Setters -------------
 
 
+//-----------------DESTRUCTORS-------------------
+Command::~Command() {
+    delete command;
+    command = nullptr;
+
+    delete effect;
+    effect = nullptr;
+}
+//destructor
+CommandProcessor::~CommandProcessor() {
+    for (Command* command: commandsList) {
+        delete command;
+        command = nullptr;
+    }
+}
+//destructor
+FileCommandProcessorAdapter::~FileCommandProcessorAdapter() {
+    delete flr;
+    flr = nullptr;
+}
+//destructor
+FileLineReader::~FileLineReader() {
+    for (string* command: rawCommands) {
+        delete command;
+        command = nullptr;
+    }
+}
 
 //Getting a string command from the user
-string CommandProcessor::readCommand () {
+string CommandProcessor::readCommand() {
     cout << "Enter your command: " <<endl;
     string command;
     cin >> command;
@@ -31,7 +65,7 @@ string CommandProcessor::readCommand () {
 };
 
 //save the string of the command and puts in collection of Command
-Command* CommandProcessor :: saveCommand (string *com, string *effect) {
+Command* CommandProcessor::saveCommand(string *com, string *effect) {
     Command* command  = new Command(com, effect );
     commandsList.push_back(command);
 
@@ -42,17 +76,16 @@ Command* CommandProcessor :: saveCommand (string *com, string *effect) {
 //Called from Game Engine to receive command from user
 //First reads a command from the user in readCommand
 // saves the command as a Command object
-Command* CommandProcessor :: getCommand() {
+Command* CommandProcessor::getCommand() {
     bool loop = true;
     while (loop) {
         readCommand();
         string c = readCommand();
         string effect = "";
 
-        //modify saveCommand to only hold string?
+
         Command* coms = saveCommand(new string(c),new string (effect));
 
-        //modify validate to return a string effect and saveCommand and saveEffect after validate method
         if (validate(c)) {
             loop = false;
         }
@@ -61,36 +94,46 @@ Command* CommandProcessor :: getCommand() {
             coms->saveEffect(new string ("invalid move"));
             continue;
         }
-
         return coms;
-
     }
-
 }
 
 //when command is executed, effect stored as string in Command object
-Command* Command :: saveEffect (string *effect) {
+Command* Command::saveEffect(string *effect) {
     this->effect = effect;
 }
 
-bool CommandProcessor :: validate(string command) {
+bool CommandProcessor::validate(string command) {
     GameEngine* trial = new GameEngine();
     int currentState = trial->userInputToInt(command);
     return trial->validateMove(currentState);
 }
 
-void FileCommandProcessorAdapter::readCommand() {
-    FileLineReader flr;
-
-    string com = flr.readLineFromFile();
-    string effect = "";
-    Command* coms = saveCommand(new string(com),new string (effect));
-
+string FileCommandProcessorAdapter::readCommand() {
+    string* cmd =  flr->getRawCommands().at(*counter);
+    *counter += 1;
+    return *cmd;
 }
 
-void FileCommandProcessorAdapter :: passCommand(string command) {
-    string effect = "";
-    Command* coms = saveCommand(new string(command),new string (effect));
+Command* FileCommandProcessorAdapter::passCommand() {
+    bool loop = true;
+    while (loop) {
+        string c = FileCommandProcessorAdapter::readCommand();
+        string effect = "";
+
+
+        Command* coms = saveCommand(new string(c),new string (effect));
+
+        if (validate(c)) {
+            loop = false;
+        }
+        else
+        {
+            coms->saveEffect(new string ("invalid move"));
+            continue;
+        }
+        return coms;
+    }
 }
 
 string FileLineReader::readLineFromFile() {
@@ -120,13 +163,10 @@ string FileLineReader::readLineFromFile() {
 
     while (!fileReading.eof()){
         getline(fileReading, lineCommand);
-
-//        string effect = "";
-//        Command* coms = saveCommand(new string(lineCommand,new string (effect)); //no access to saveCommand & saveEffect
-
+        {
+            rawCommands.push_back(new string(lineCommand));
+        }
     }
-
-
 }
 
 

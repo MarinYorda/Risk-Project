@@ -12,19 +12,22 @@ using namespace std;
 
 class Command;
 class FileLineReader;
+class FileCommandProcessorAdapter;
+
 class CommandProcessor
 
 {
 private:
-        string readCommand();
-        vector <Command*> commandsList;
-
-
+    vector <Command*> commandsList;
+protected:
+    string readCommand();
+    Command* saveCommand(string* command, string* effect);
 public:
-        Command* getCommand();
-        Command* saveCommand(string* command, string* effect);
-        bool validate(string command);
-       ;
+    Command* getCommand();
+    vector <Command*> getCommandsList();
+    bool validate(string command);
+    ~CommandProcessor();
+
 };
 
 class Command
@@ -40,14 +43,23 @@ public:
     Command();
     Command(string *command, string *effect);
 
+    //destructor
+    ~Command();
+
 
 };
 
 class FileCommandProcessorAdapter : public CommandProcessor
 {
 public:
-    void readCommand ();
-    void passCommand (string command);
+    FileCommandProcessorAdapter();
+    string readCommand();
+    Command* passCommand();
+
+    //destructor
+    ~FileCommandProcessorAdapter();
+
+
 
 
 };
@@ -55,32 +67,17 @@ public:
 class FileLineReader
 {
 public:
-    string readLineFromFile ();
+    void readLineFromFile();
     FileLineReader();
+
+    // Getters
+    vector<string*> getRawCommands();
+
+    //destructor
+    ~FileLineReader();
 
 };
 
 
 #endif //RISK_PROJECT_COMMANDPROCESSING_H
 
-/*
- * Startup () :
- *   while stage != playStage:
- *      CommandPorcessing :: getCommand() -> return valid command
- *      execute command
- *      transition state
- *
- *
- * getCommand():
- * while (True)
- *      readCommand()
- *      saveCommand()
- *      validate()
- *             if not valid:
- *                  continue
- *             else:
- *                  send to startup()
- *                  saveEffect()
- *                  break
- *
- * */
