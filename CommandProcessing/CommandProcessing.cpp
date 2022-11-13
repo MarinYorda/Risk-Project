@@ -36,19 +36,16 @@ Command::~Command() {
     delete effect;
     effect = nullptr;
 }
-//destructor
 CommandProcessor::~CommandProcessor() {
     for (Command* command: commandsList) {
         delete command;
         command = nullptr;
     }
 }
-//destructor
 FileCommandProcessorAdapter::~FileCommandProcessorAdapter() {
     delete flr;
     flr = nullptr;
 }
-//destructor
 FileLineReader::~FileLineReader() {
     for (string* command: rawCommands) {
         delete command;
@@ -64,7 +61,7 @@ string CommandProcessor::readCommand() {
     return command;
 };
 
-//save the string of the command and puts in collection of Command
+//Saving a command object that will hold the command and the resulting effect from it
 Command* CommandProcessor::saveCommand(string *com, string *effect) {
     Command* command  = new Command(com, effect );
     commandsList.push_back(command);
@@ -75,7 +72,7 @@ Command* CommandProcessor::saveCommand(string *com, string *effect) {
 
 //Called from Game Engine to receive command from user
 //First reads a command from the user in readCommand
-// saves the command as a Command object
+//Saves the command as a Command object
 Command* CommandProcessor::getCommand() {
     bool loop = true;
     while (loop) {
@@ -83,9 +80,10 @@ Command* CommandProcessor::getCommand() {
         string c = readCommand();
         string effect = "";
 
-
         Command* coms = saveCommand(new string(c),new string (effect));
 
+        //if it's a valid command, the loop will terminate and the effect is saved in the GameEngine
+        //else reporting to the user they have entered an invalid move at that stage of the game, saved the input as an invalid move
         if (validate(c)) {
             loop = false;
         }
@@ -103,27 +101,34 @@ Command* Command::saveEffect(string *effect) {
     this->effect = effect;
 }
 
+//validate method to ensure the user is entering and following the correct schema of the game
+//game engine called to retrieve game state for comparison
 bool CommandProcessor::validate(string command) {
     GameEngine* trial = new GameEngine();
     int currentState = trial->userInputToInt(command);
     return trial->validateMove(currentState);
 }
 
+//allows the game engine to read the commands from the file
 string FileCommandProcessorAdapter::readCommand() {
     string* cmd =  flr->getRawCommands().at(*counter);
+    //counter increments to read the following command one by one
     *counter += 1;
     return *cmd;
 }
 
+//method to pass the command from the file to the game engine
 Command* FileCommandProcessorAdapter::passCommand() {
     bool loop = true;
     while (loop) {
         string c = FileCommandProcessorAdapter::readCommand();
         string effect = "";
 
-
+        //saving the command read from the file in a command object
+        //initially effect is empty until the game engine sends the effect back, it will be stored with its respective method saveEffect
         Command* coms = saveCommand(new string(c),new string (effect));
 
+        //calling the validate method to ensure the user has entered the correct output at the correct stage of the game
         if (validate(c)) {
             loop = false;
         }
@@ -136,17 +141,17 @@ Command* FileCommandProcessorAdapter::passCommand() {
     }
 }
 
-string FileLineReader::readLineFromFile() {
+//method to open a text file the user wishes to read commands from
+void FileLineReader::readLineFromFile() {
     bool loopy = true;
     string text;
 
+    //loop to ensure user has entered a txt file and not another file
     while (loopy) {
     cout << "Enter the text file you wish to read commands from: " << endl;
     cin >> text;
-
     cout << "We are now reading commands from " << text << endl;
 
-    //making sure the user has entered a text file
     string txt = text.substr (text.length()-4,text.length());
     if (txt != ".txt"){
         cout << "You have not entered a text file, please try again. " << endl;
@@ -156,11 +161,12 @@ string FileLineReader::readLineFromFile() {
     }
 
     //opening the file
-
     ifstream fileReading;
     fileReading.open (text);
     string lineCommand;
 
+    //reads the file until there is nothing else in it
+    //it will push into a vector all the commands that it has read from the file
     while (!fileReading.eof()){
         getline(fileReading, lineCommand);
         {
