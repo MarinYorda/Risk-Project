@@ -48,7 +48,7 @@
 //    }
 //    return 0;
 //}
-int main(){
-    testMainGameLoop();
-    return 0;
-}
+//int main(){
+//    testMainGameLoop();
+//    return 0;
+//}

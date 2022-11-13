@@ -84,7 +84,7 @@ private:
  //Creation of a map in the MapLoader so that you can access the list of territories and continents from the loader itself
     Map* realMap;
 public:
-    Map* loadMap();
+    Map* loadMap(string mapName);
     Territory* addTerritory(string tName, string cName);
 
     //Overloading operators

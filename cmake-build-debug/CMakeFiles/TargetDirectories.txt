@@ -1,0 +1,3 @@
+C:/Users/Marin/CLionProjects/Risk-Project/cmake-build-debug/CMakeFiles/Risk_Project.dir
+C:/Users/Marin/CLionProjects/Risk-Project/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Marin/CLionProjects/Risk-Project/cmake-build-debug/CMakeFiles/rebuild_cache.dir

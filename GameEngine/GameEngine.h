@@ -4,12 +4,16 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include "Player.h"
 #include "map.h"
+#include "CommandProcessing.h"
+
 using namespace std;
 
 class GameEngine {
 private:
+    Map* gameMap;
+    vector<Player*> players;
+
     unordered_map<int,vector<int*>> allowedStates;
     unordered_map<int,string*> intToStringState;
     static int* state;
@@ -36,14 +40,21 @@ public:
     bool validateMove(int move);
     int userInputToInt(string userInput);
 
+    // START UP PHASE METHODS
+    void startupPhase();
+    string* execute(string* command);
+
+    string* loadMap(string mapName);
+    string* validateMap();
+    string* addPlayer(string* name);
+    string* gameStart();
+    void shufflePlayerOrder();
+
+
+
     // DESTRUCTOR
     ~GameEngine();
-
-
-    //Part 3 Abdur & Nauar
-    void mainGameLoop();
-    void reinforcementPhase(vector<Player*> listOfPlayers,Map* map);
-    void issueOrdersPhase(vector<Player*> listOfPlayers,Map* map);
-    void executeOrdersPhase();
-    int continentBonus(Player* player, Map* map);
 };
+
+vector<string> split(string cmd);
+Map* testMap();

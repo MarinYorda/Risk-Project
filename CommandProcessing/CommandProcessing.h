@@ -15,7 +15,6 @@ class FileLineReader;
 class FileCommandProcessorAdapter;
 
 class CommandProcessor
-
 {
 private:
     vector <Command*> commandsList;
@@ -43,6 +42,10 @@ public:
     Command();
     Command(string *command, string *effect);
 
+    //Getters
+    string* getEffect();
+    string* getCommandString();
+
     //destructor
     ~Command();
 
@@ -51,6 +54,9 @@ public:
 
 class FileCommandProcessorAdapter : public CommandProcessor
 {
+private:
+    FileLineReader* flr;
+    static int* counter;
 public:
     FileCommandProcessorAdapter();
     string readCommand();
@@ -66,6 +72,8 @@ public:
 
 class FileLineReader
 {
+private:
+    vector <string*> rawCommands;
 public:
     void readLineFromFile();
     FileLineReader();

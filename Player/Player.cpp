@@ -21,6 +21,9 @@ Player::Player(string* pName) {
 
     this->hand = new Hand();
     this->orders = new OrdersLists;
+    this->reinforcements = new int(0);
+
+    this->receivedCard = new bool(false);       // amanda part 4
 
 }
 
@@ -33,6 +36,8 @@ Player::Player(const Player& copyPlayer) {
     this->deck = copyPlayer.deck;
     this->orders = copyPlayer.orders;
     this->territories = copyPlayer.territories;
+    this->negotiations = copyPlayer.negotiations;       // amanda part 4
+    this->receivedCard = copyPlayer.receivedCard;       // amanda part 4
 }
 
 // ASSIGNMENT OPERATOR
@@ -45,6 +50,7 @@ Player& Player::operator=(const Player& copyPlayer) {
     this->deck = copyPlayer.deck;
     this->orders = copyPlayer.orders;
     this->territories = copyPlayer.territories;
+    this->negotiations = copyPlayer.negotiations;       // amanda part 4
 
     return *this;
 }
@@ -101,6 +107,15 @@ int* Player::getReinforcements(){
     return reinforcements;
 }
 
+vector<Player*> Player::getNegotiations() {     // amanda part 4
+    return this->negotiations;
+};
+
+bool* Player::getReceivedCard() {       // amanda part 4
+    return this->receivedCard;
+};
+
+
 // SETTERS
 
 void Player::setId(int newId) {
@@ -126,12 +141,25 @@ void Player::setOrders(OrdersLists* newOrders) {
 void Player::setTerritories(vector<Territory*> newTerritories) {
     territories = newTerritories;
 }
+// amanda part 4 (i just added a new line here for uniformity)
 void Player::setReinforcements(int noOfReinforcements) {
     reinforcements = new int(noOfReinforcements);
 }
 
+void Player::setNegotiations(vector<Player *> negotiations) {       // amanda part 4
+    this->negotiations = negotiations;
+};
+
+void Player::setReceivedCard(bool* receivedCard) {       // amanda part 4
+    this->receivedCard = receivedCard;
+};
+
 
 // OTHER
+
+void Player::addTerritory(Territory* newTerr) {
+    this->territories.push_back(newTerr);
+}
 
 vector<Territory*> Player::toAttack() {
     //Part 3 Abdur & Nauar

@@ -9,6 +9,10 @@
 #include <fstream>
 using namespace std;
 
+//TODO: copy constructor, assignment op, stream insertion
+
+int zro = 0;
+int* FileCommandProcessorAdapter::counter = &zro;
 
 //---------------CONSTRUCTORS-------------------
 Command::Command() {};
@@ -27,6 +31,21 @@ Command::Command(std::string *command, std::string *effect) {
 
 //----------------Getters & Setters -------------
 
+string* Command::getEffect() {
+    return this->effect;
+}
+
+string* Command::getCommandString(){
+    return this->command;
+}
+
+vector <Command*> CommandProcessor::getCommandsList(){
+    return this->commandsList;
+}
+
+vector <string*> FileLineReader::getRawCommands(){
+    return this->rawCommands;
+}
 
 //-----------------DESTRUCTORS-------------------
 Command::~Command() {
@@ -57,7 +76,7 @@ FileLineReader::~FileLineReader() {
 string CommandProcessor::readCommand() {
     cout << "Enter your command: " <<endl;
     string command;
-    cin >> command;
+    getline(cin, command);
     return command;
 };
 
@@ -76,7 +95,6 @@ Command* CommandProcessor::saveCommand(string *com, string *effect) {
 Command* CommandProcessor::getCommand() {
     bool loop = true;
     while (loop) {
-        readCommand();
         string c = readCommand();
         string effect = "";
 
@@ -89,6 +107,7 @@ Command* CommandProcessor::getCommand() {
         }
         else
         {
+            cout << "invalid move! try again" << endl;
             coms->saveEffect(new string ("invalid move"));
             continue;
         }
@@ -105,7 +124,8 @@ Command* Command::saveEffect(string *effect) {
 //game engine called to retrieve game state for comparison
 bool CommandProcessor::validate(string command) {
     GameEngine* trial = new GameEngine();
-    int currentState = trial->userInputToInt(command);
+    vector<string> commandElements = split(command);
+    int currentState = trial->userInputToInt(commandElements.at(0));
     return trial->validateMove(currentState);
 }
 
